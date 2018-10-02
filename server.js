@@ -8,10 +8,11 @@ app.get('/', function (req, res) {
     res.send('Hello World');
 })
 
-// app.post('/logs', function(req, res) {
-//     console.log("Request body: " + req.body);
-//     let log = req.body;
-// })
+app.post('/logs', function(req, res) {
+    console.log("Request body: " + req.body);
+    let log = req.body;
+    res.send("Hello World");
+})
 
 var server = app.listen(8081, function () {
     var host = server.address().address
