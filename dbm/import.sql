@@ -1,4 +1,3 @@
-
 drop table if exists plant_log;
 drop table if exists plant;
 drop table if exists user;
