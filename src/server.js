@@ -1,28 +1,27 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const app = express();
 const databaseService = require('./DatabaseService');
 const userRouter = require('./routers/User');
+const logRouter = require('./routers/Log');
+
+const app = express();
 
 databaseService.getAllUsers(function(result){
     console.log(result);
 });
 
-// middleware
+// middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use('/users', userRouter);
 
-// routing
+// routers
+app.use('/users', userRouter);
+app.use('/logs', logRouter);
+
+// default route for health check
 app.get('/', function (req, res) {
     res.send("I'm healthy!");
-})
-
-app.post('/logs', function(req, res) {
-    let log = req.body;
-    console.log(log);
-    res.send("Saving log to database...");
 })
 
 var server = app.listen(8080, function () {
