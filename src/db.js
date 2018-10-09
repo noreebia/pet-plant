@@ -1,24 +1,20 @@
 const mysql = require('mysql');
 
-let connection;
+let connection = mysql.createConnection(
+    {
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_DATABASE
+    }
+);
 
-exports.connect = (host, user, password, database) => {
-    // connection = mysql.createConnection(
-    //     {
-    //         host: host,
-    //         user: user,
-    //         password: password,
-    //         database: database
-    //     }
-    // );
-    return mysql.createConnection(
-        {
-            host: host,
-            user: user,
-            password: password,
-            database: database
-        }
-    );
-}
+connection.connect(function (err) {
+    if (!err) {
+        console.log("Database is connected ... \n\n");
+    } else {
+        console.log("Error connecting database ... \n\n");
+    }
+});
 
 exports.connection = connection;
