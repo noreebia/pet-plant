@@ -1,15 +1,18 @@
 require('dotenv').config();
-const express = require('express');
-const bodyParser = require('body-parser');
-const databaseService = require('./DatabaseService');
-const userRouter = require('./routers/User');
-const logRouter = require('./routers/Log');
+const express = require('express'),
+    bodyParser = require('body-parser'),
+    databaseService = require('./databaseService'),
+    userRouter = require('./routers/user'),
+    logRouter = require('./routers/log'),
+    swaggerUi = require('swagger-ui-express'),
+    swaggerSpec = require('./swaggerSpec');
 
 const app = express();
 
 // middlewares
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec.swaggerSpec)); //swagger
 
 // routers
 app.use('/users', userRouter);
