@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const databaseService = require('./DatabaseService');
+const userRouter = require('./routers/User');
 
 databaseService.getAllUsers(function(result){
     console.log(result);
@@ -11,7 +12,7 @@ databaseService.getAllUsers(function(result){
 // middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-
+app.use('/users', userRouter);
 
 // routing
 app.get('/', function (req, res) {
