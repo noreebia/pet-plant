@@ -7,10 +7,6 @@ const logRouter = require('./routers/Log');
 
 const app = express();
 
-databaseService.getAllUsers(function(result){
-    console.log(result);
-});
-
 // middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
