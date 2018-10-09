@@ -2,13 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const db = require('./db');
 const databaseService = require('./DatabaseService');
-
-
-// database connection
-// let connection = db.connect(process.env.DB_HOST, process.env.DB_USER, process.env.DB_PASSWORD, process.env.DB_DATABASE);
-// let databaseService = new DatabaseService (connection);
 
 databaseService.getAllUsers(function(result){
     console.log(result);
