@@ -26,9 +26,11 @@ router.post('/', function (req, res) {
     .catch( (error) => res.json(new DTO(false, error.message)))
 })
 
-router.post('/test', function (req, res) {
-    console.log(req.body);
-    databaseService.registerKakaotalkId(req.body.petplantID, req.body.kakaoID)
+router.post('/register_kakao', function (req, res) {
+    let email = req.body.petplantID;
+    let kakao = req.body.kakaoID;
+
+    databaseService.registerKakaotalkId(email, kakao)
     .then( (result)=> {
        res.json(result); 
     } )
