@@ -69,3 +69,20 @@ exports.isValidCredentials = function (email, password) {
         })
     })
 }
+
+exports.registerKakaotalkId = function (email, kakaotalkId) {
+    return new Promise((resolve, reject)=>{
+        let query = `UPDATE user SET kakaotalk_id = '${kakaotalkId}' WHERE email = '${email}';`;
+        console.log(query);
+        db.connection.query(query, function (err, rows) {
+            if (err) {
+                reject(new Error("Error querying database"));
+            }
+            console.log(rows);
+            // let result = rows[0];
+            // isValid = Boolean(result[Object.keys(result)[0]]);
+            // resolve(new DTO(isValid));
+            resolve(rows);
+        })
+    })
+}

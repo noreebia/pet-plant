@@ -58,6 +58,7 @@ app.post('/message', function(req,res){
     console.log(content);
 
     if(content.includes("식물 선택하기")){
+        let list = [];
         answer = {
             "message":{
                 "text":"식물을 선택"

@@ -26,4 +26,12 @@ router.post('/', function (req, res) {
     .catch( (error) => res.json(new DTO(false, error.message)))
 })
 
+router.post('/test', function (req, res) {
+    console.log(req.body);
+    databaseService.registerKakaotalkId(req.body.petplantID, req.body.kakaoID)
+    .then( (result)=> {
+       res.json(result); 
+    } )
+})
+
 module.exports = router;
