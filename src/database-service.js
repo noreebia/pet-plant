@@ -10,7 +10,7 @@ exports.getAllUsers = function (callback) {
 
 exports.getUserByEmail = function (userEmail) {
     return new Promise(function (resolve, reject) {
-        let query = "SELECT * FROM user WHERE user_email = \"" + userEmail + "\"";
+        let query = "SELECT * FROM user WHERE email = \"" + userEmail + "\"";
         db.connection.query(query, function (err, rows) {
             if (err) {
                 reject(new Error("Error querying database"));
@@ -32,7 +32,7 @@ exports.createUser = async function (email, password) {
 
 saveUser = function (email, password) {
     return new Promise(function (resolve, reject) {
-        let query = "INSERT INTO user (user_id, user_email, user_password) VALUES (default , \'" + email + "\',\'" + password + "\')";
+        let query = "INSERT INTO user (id, email, password) VALUES (default , \'" + email + "\',\'" + password + "\')";
         db.connection.query(query, function (err, rows) {
             if (err) {
                 reject(new Error("Error querying database"));
@@ -44,7 +44,7 @@ saveUser = function (email, password) {
 
 isExistingEmail = function (username) {
     return new Promise((resolve, reject) => {
-        let query = `SELECT EXISTS(SELECT * FROM user WHERE user_email = '${username}');`;
+        let query = `SELECT EXISTS(SELECT * FROM user WHERE email = '${username}');`;
         db.connection.query(query, function (err, rows) {
             if (err) {
                 reject(new Error("Error querying database"));
@@ -57,7 +57,7 @@ isExistingEmail = function (username) {
 
 exports.isValidCredentials = function (email, password) {
     return new Promise((resolve, reject)=>{
-        let query = `SELECT EXISTS(SELECT * FROM user WHERE user_email = '${email}' AND user_password = '${password}');`;
+        let query = `SELECT EXISTS(SELECT * FROM user WHERE email = '${email}' AND password = '${password}');`;
         db.connection.query(query, function (err, rows) {
             if (err) {
                 reject(new Error("Error querying database"));
