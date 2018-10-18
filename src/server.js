@@ -31,6 +31,7 @@ app.post('/enroll_kakao', function (req, res){
     let kakao = req.body.kakaoID;
 
     console.log(email + " - " + kakao);
+    res.send({"result" : "success"})
 })
 
 // default chatbot api route
