@@ -32,7 +32,7 @@ router.post('/register_kakao', function (req, res) {
 
     databaseService.registerKakaotalkId(email, kakao)
     .then( (result)=> {
-       res.json(result); 
+        res.render('success');
     } )
 })
 
