@@ -1,8 +1,20 @@
 <HTML>
     <head>
+        <script type="text/javascript">
+            function submitForm(action){
+                document.record.innerHTML = "<input type=hidden name=submit value='" + action +"'>";
+                document.change_record.submit();
+            }
+        </script>
         <meta charset=utf-8>
     </head>
     <body>
-        <p>등록 테스트 페이지 입니다.</p>
+        <form id="frm">
+            <p>Pet Plant 앱에서 사용중인 ID를 적어주세요!</p><br><br>
+            <input type="text" name="petplantID" maxlength="50"><br>
+            <p>카카오톡 플러스 친구에서 제공된 USER ID를 적어주세요.</p><br><br>
+            <input type="text" name="kakaoID" maxlength="50"><br>
+            <input type='submit' value='등록하기'>
+        </form>
     </body>
 </HTML>
