@@ -20,19 +20,6 @@ router.post('/validation',(req, res)=>{
     .catch((error)=> res.json(new DTO(false, error.message)));
 })
 
-router.get('/:userEmail/test', function (req, res) {
-    databaseService.isExistingEmail(req.params.userEmail)
-    .then((result) => {
-        console.log(result);
-        res.json(new DTO(true, result) 
-        )}
-    )
-    .catch((error) => {
-        console.log(error)
-        res.json(new DTO(false, error.message))
-    })
-})
-
 router.post('/', function (req, res) {
     databaseService.createUser(req.body.email, req.body.password)
     .then((result) => res.json(result))
