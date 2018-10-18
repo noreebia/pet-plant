@@ -30,7 +30,7 @@ app.post('/enroll_kakao', function (req, res){
     let email = req.body.petplantID;
     let kakao = req.body.kakaoID;
 
-    console.log(email + " - " + kakao);
+    console.log(email + " <-> " + kakao);
     res.render('success');
 })
 
