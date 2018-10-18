@@ -25,6 +25,14 @@ app.get('/', function (req, res) {
     res.send("I'm healthy!");
 })
 
+// kakao id enroll route
+app.post('/enroll_kakao', function (req, res){
+    let email = req.body.petplantID;
+    let kakao = req.body.kakaoID;
+
+    console.log(email + " - " + kakao);
+})
+
 // default chatbot api route
 app.get('/keyboard', function (req, res){
     let answer = {
