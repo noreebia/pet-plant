@@ -3,6 +3,7 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     userRouter = require('./routers/user-router'),
     logRouter = require('./routers/log-router'),
+    imageRouter = require('./routers/img-router'),
     app = express();
 
     
@@ -18,6 +19,7 @@ app.engine('html', require('ejs').renderFile);
 // routers
 app.use('/users', userRouter);
 app.use('/logs', logRouter);
+app.use('/images', imageRouter);
 
 
 // default route for health check
