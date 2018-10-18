@@ -66,7 +66,7 @@ app.post('/message', function(req,res){
                 "text":"USER ID: "+ user_key + "\n등록방법!\n1. 하단 링크를 클릭해주세요.\n2. PetPlant 아이디와 상단의 유저 ID를 입력해주세요.\n 3.등록버튼을 누르시면 끝!",//+content  in case 'text'
                 "message_button": {
                 "label": "등록하러 가기.",
-                "url": "http://117.16.136.73/submit"
+                "url": "http://117.16.136.73:8080/submit"
                 }
             }
         };
