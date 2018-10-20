@@ -2,16 +2,16 @@ const db = require('./db');
 let DTO = require('./dto');
 
 exports.getAllUsers = function (callback) {
-    db.connection.query('SELECT * FROM user', function (err, rows) {
+    db.connection.query('SELECT * FROM user', (err, rows) => {
         if (err) throw err;
         callback(rows);
     });
 };
 
 exports.getUserByEmail = function (userEmail) {
-    return new Promise(function (resolve, reject) {
+    return new Promise( (resolve, reject) => {
         let query = "SELECT * FROM user WHERE email = \"" + userEmail + "\"";
-        db.connection.query(query, function (err, rows) {
+        db.connection.query(query, (err, rows) => {
             if (err) {
                 reject(new Error("Error querying database"));
             }
@@ -31,9 +31,9 @@ exports.createUser = async function (email, password) {
 }
 
 saveUser = function (email, password) {
-    return new Promise(function (resolve, reject) {
+    return new Promise( (resolve, reject) => {
         let query = "INSERT INTO user (id, email, password) VALUES (default , \'" + email + "\',\'" + password + "\')";
-        db.connection.query(query, function (err, rows) {
+        db.connection.query(query, (err, rows) => {
             if (err) {
                 reject(new Error("Error querying database"));
             }
@@ -45,7 +45,7 @@ saveUser = function (email, password) {
 isExistingEmail = function (username) {
     return new Promise((resolve, reject) => {
         let query = `SELECT EXISTS(SELECT * FROM user WHERE email = '${username}');`;
-        db.connection.query(query, function (err, rows) {
+        db.connection.query(query, (err, rows) => {
             if (err) {
                 reject(new Error("Error querying database"));
             }
@@ -58,7 +58,7 @@ isExistingEmail = function (username) {
 exports.isValidCredentials = function (email, password) {
     return new Promise((resolve, reject)=>{
         let query = `SELECT EXISTS(SELECT * FROM user WHERE email = '${email}' AND password = '${password}');`;
-        db.connection.query(query, function (err, rows) {
+        db.connection.query(query, (err, rows) => {
             if (err) {
                 reject(new Error("Error querying database"));
             }
@@ -74,7 +74,7 @@ exports.registerKakaotalkId = function (email, kakaotalkId) {
     return new Promise((resolve, reject)=>{
         let query = `UPDATE user SET kakaotalk_id = '${kakaotalkId}' WHERE email = '${email}';`;
         console.log(query);
-        db.connection.query(query, function (err, rows) {
+        db.connection.query(query, (err, rows) => {
             if (err) {
                 reject(new Error("Error querying database"));
             }
