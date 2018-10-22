@@ -3,19 +3,20 @@ drop table if exists plant;
 drop table if exists user;
 
 CREATE TABLE `plant` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` varchar(50) NOT NULL,
   `owner_email` varchar(50) NOT NULL,
   `species` varchar(50) DEFAULT NULL,
   `nickname` varchar(50) DEFAULT NULL,
   `selected` int(1) DEFAULT '0',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
   KEY `fk_owner_email` (`owner_email`),
   CONSTRAINT `fk_owner_email` FOREIGN KEY (`owner_email`) REFERENCES `user` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
 CREATE TABLE `plant_log` (
-  `plant_id` int(10) unsigned NOT NULL,
-  `recorded_date` timestamp NOT NULL,
+  `plant_id` varchar(50) NOT NULL,
+  `recorded_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `illumination_level` float DEFAULT NULL,
   `temperature_level` float DEFAULT NULL,
   `moisture_level` float DEFAULT NULL,
