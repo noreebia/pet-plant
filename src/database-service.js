@@ -92,7 +92,8 @@ exports.isRegisteredId = function (kakaotalkId) {
                 reject(new Error("Error querying database"));
             }
             console.log(rows);
-            resolve(rows);
+            let result = rows[0];
+            resolve(result[Object.keys(result)[0]]);
         })
     })
 }
