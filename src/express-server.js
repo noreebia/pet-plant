@@ -70,7 +70,7 @@ app.post('/message', function(req,res){
         };
     }
     else if(content.includes("대화하기")){
-        databaseService.isRegisteredId(user_key)
+        databaseService.getPlantIdsByKakaotalkId(user_key)
         .then( (result) => {
             console.log(result)
         } )
