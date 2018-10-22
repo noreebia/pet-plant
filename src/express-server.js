@@ -54,6 +54,11 @@ app.post('/message', function(req,res){
 
     if(content.includes("식물 선택하기")){
         let list = [];
+        databaseService.registeredList(user_key)
+        .then( (result) => {
+            console.log(result)
+        })
+
         answer = {
             "message":{
                 "text":"식물을 선택"
@@ -65,7 +70,7 @@ app.post('/message', function(req,res){
         };
     }
     else if(content.includes("대화하기")){
-        databaseService.isRegisteredId()
+        databaseService.isRegisteredId(user_key)
         .then( (result) => {
             console.log(result)
         } )
@@ -74,10 +79,6 @@ app.post('/message', function(req,res){
             // 카카오톡 user_id가 등록되지 않은경우
             "message":{
                 "text":"안녕하세요 오랜만이에요.",
-            },
-            "keyboard": {
-                "type": "buttons",
-                "buttons": defaultMenu
             }
         };
     }
