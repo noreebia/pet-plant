@@ -9,11 +9,11 @@ exports.getAllUsers = function (callback) {
 };
 
 exports.getUserByEmail = function (userEmail) {
-    return new Promise( (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         let query = "SELECT * FROM user WHERE email = \"" + userEmail + "\"";
         db.connection.query(query, (err, rows) => {
             if (err) {
-                reject(new Error("Error querying database"));
+                reject(new DTO(false, err));
             }
             resolve(rows);
         })
@@ -31,11 +31,11 @@ exports.createUser = async function (email, password) {
 }
 
 saveUser = function (email, password) {
-    return new Promise( (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         let query = "INSERT INTO user (id, email, password) VALUES (default , \'" + email + "\',\'" + password + "\')";
         db.connection.query(query, (err, rows) => {
             if (err) {
-                reject(new Error("Error querying database"));
+                reject(new DTO(false, err));
             }
             resolve(rows);
         })
@@ -47,7 +47,7 @@ isExistingEmail = function (username) {
         let query = `SELECT EXISTS(SELECT * FROM user WHERE email = '${username}');`;
         db.connection.query(query, (err, rows) => {
             if (err) {
-                reject(new Error("Error querying database"));
+                reject(new DTO(false, err));
             }
             let result = rows[0];
             resolve(result[Object.keys(result)[0]]);
@@ -56,11 +56,11 @@ isExistingEmail = function (username) {
 }
 
 exports.isValidCredentials = function (email, password) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         let query = `SELECT EXISTS(SELECT * FROM user WHERE email = '${email}' AND password = '${password}');`;
         db.connection.query(query, (err, rows) => {
             if (err) {
-                reject(new Error("Error querying database"));
+                reject(new DTO(false, err));
             }
             console.log(rows);
             let result = rows[0];
@@ -71,12 +71,12 @@ exports.isValidCredentials = function (email, password) {
 }
 
 exports.registerKakaotalkId = function (email, kakaotalkId) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         let query = `UPDATE user SET kakaotalk_id = '${kakaotalkId}' WHERE email = '${email}';`;
         console.log(query);
         db.connection.query(query, (err, rows) => {
             if (err) {
-                reject(new Error("Error querying database"));
+                reject(new DTO(false, err));
             }
             console.log(rows);
             resolve(rows);
@@ -85,11 +85,11 @@ exports.registerKakaotalkId = function (email, kakaotalkId) {
 }
 
 exports.isRegisteredId = function (kakaotalkId) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         let query = `SELECT count(*) FROM user WHERE email =  (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}' ) AND kakaotalk_id IS NULL;`;
         db.connection.query(query, (err, rows) => {
             if (err) {
-                reject(new Error("Error querying database"));
+                reject(new DTO(false, err));
             }
             console.log(rows);
             let result = rows[0];
@@ -99,14 +99,28 @@ exports.isRegisteredId = function (kakaotalkId) {
 }
 
 exports.registeredList = function (kakaotalkId) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         let query = `SELECT id FROM plant WHERE owner_email = (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}' );`;
         db.connection.query(query, (err, rows) => {
             if (err) {
-                reject(new Error("Error querying database"));
+                reject(new DTO(false, err));
             }
             console.log(rows);
             resolve(rows);
+        })
+    })
+}
+
+exports.registerPlant = (plantId, userEmail, species, nickname) => {
+    return new Promise((resolve, reject) => {
+        let query = `INSERT INTO plant (id, owner_email, species, nickname)  
+        VALUES ( ${plantId}, '${userEmail}', '${species}', '${nickname}'); `;
+        db.connection.query(query, (err, rows) => {
+            if (err) {
+                console.log(err);
+                reject(new DTO(false, err));
+            }
+            resolve(new DTO(true));
         })
     })
 }

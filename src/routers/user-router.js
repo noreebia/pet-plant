@@ -31,9 +31,18 @@ router.post('/register_kakao', function (req, res) {
     let kakao = req.body.kakaoID;
 
     databaseService.registerKakaotalkId(email, kakao)
-    .then( (result)=> {
-        res.render('success');
-    } )
+    .then((result)=> res.render('success'))
+})
+
+router.post('/plants', function (req, res) {
+    let plantId = req.body.plantId;
+    let userEmail = req.body.userEmail;
+    let species = req.body.species;
+    let nickname = req.body.nickname;
+
+    databaseService.registerPlant(plantId, userEmail, species, nickname)
+    .then((result)=> res.json(result))
+    .catch((error) => res.json(error))
 })
 
 module.exports = router;

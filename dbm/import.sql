@@ -2,31 +2,32 @@ drop table if exists plant_log;
 drop table if exists plant;
 drop table if exists user;
 
-create table user(
-	user_id int unsigned not null auto_increment,
-    user_email varchar (50) not null,
-    user_password varchar (30) not null,
-    kakaotalk_id varchar (30),
-    primary key (user_id)
-);
+CREATE TABLE `plant` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `owner_email` varchar(50) NOT NULL,
+  `species` varchar(50) DEFAULT NULL,
+  `nickname` varchar(50) DEFAULT NULL,
+  `selected` int(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `fk_owner_email` (`owner_email`),
+  CONSTRAINT `fk_owner_email` FOREIGN KEY (`owner_email`) REFERENCES `user` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
-create table plant (
-	plant_id int unsigned not null auto_increment,
-    owner_id int unsigned,
-    primary key (plant_id),
-    foreign key (owner_id)
-		references user (user_id)
-        on update cascade on delete set null
-);
+CREATE TABLE `plant_log` (
+  `plant_id` int(10) unsigned NOT NULL,
+  `recorded_date` timestamp NOT NULL,
+  `illumination_level` float DEFAULT NULL,
+  `temperature_level` float DEFAULT NULL,
+  `moisture_level` float DEFAULT NULL,
+  PRIMARY KEY (`plant_id`,`recorded_date`),
+  CONSTRAINT `plant_log_ibfk_1` FOREIGN KEY (`plant_id`) REFERENCES `plant` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
-create table plant_log (
-	plant_id int unsigned,
-    recorded_date timestamp not null,
-    illumination_level float,
-    temperature_level float,
-    moisture_level float,
-    primary key (plant_id, recorded_date),
-	foreign key (plant_id)
-        references plant (plant_id)
-        on update cascade on delete cascade
-);
+CREATE TABLE `user` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(50) NOT NULL,
+  `password` varchar(30) NOT NULL,
+  `kakaotalk_id` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `constr_ID` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
