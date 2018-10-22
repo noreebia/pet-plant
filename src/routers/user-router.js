@@ -45,4 +45,12 @@ router.post('/plants', function (req, res) {
     .catch((error) => res.json(error))
 })
 
+// router.post('/test/test/test', function (req, res) {
+//     let kakaotalkId = req.body.kakaotalkId;
+    
+//     databaseService.getPlantIdsByKakaotalkId(kakaotalkId)
+//     .then((result)=> res.json(result))
+//     .catch((error) => res.json(error))
+// })
+
 module.exports = router;

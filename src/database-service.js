@@ -98,15 +98,15 @@ exports.isRegisteredId = function (kakaotalkId) {
     })
 }
 
-exports.registeredList = function (kakaotalkId) {
+exports.getPlantIdsByKakaotalkId = function (kakaotalkId) {
     return new Promise((resolve, reject) => {
-        let query = `SELECT id FROM plant WHERE owner_email = (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}' );`;
+        let query = `SELECT id FROM plant WHERE owner_email LIKE (SELECT email FROM user WHERE kakaotalk_id LIKE '${kakaotalkId}');`;
         db.connection.query(query, (err, rows) => {
             if (err) {
                 reject(new DTO(false, err));
             }
             console.log(rows);
-            resolve(rows);
+            resolve(new DTO(true, rows));
         })
     })
 }
