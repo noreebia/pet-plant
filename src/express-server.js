@@ -4,6 +4,7 @@ const express = require('express'),
     userRouter = require('./routers/user-router'),
     logRouter = require('./routers/log-router'),
     imageRouter = require('./routers/img-router'),
+    databaseService = require('./database-service'),
     app = express();
 
     
@@ -31,7 +32,7 @@ app.get('/', function (req, res) {
 app.get('/keyboard', function (req, res){
     let answer = {
         "type" : "buttons",
-        "buttons" : ["대화하기", "식물 선택하기", "사용법"]
+        "buttons" : ["등록하기", "대화하기", "식물 선택하기", "사용법"]
     };
     res.send(answer);
 })
@@ -46,6 +47,7 @@ app.post('/message', function(req,res){
     let type = decodeURIComponent(req.body.type); // message type
     let content = decodeURIComponent(req.body.content); // user's message
     let answer;
+    let defaultMenu = ["등록하기", "대화하기", "식물 선택하기", "사용법"];
     console.log(user_key);
     console.log(type);
     console.log(content);
@@ -63,6 +65,23 @@ app.post('/message', function(req,res){
         };
     }
     else if(content.includes("대화하기")){
+        databaseService.isRegisteredId()
+        .then( (result) => {
+            console.log(result)
+        } )
+
+        answer = {
+            // 카카오톡 user_id가 등록되지 않은경우
+            "message":{
+                "text":"안녕하세요 오랜만이에요.",
+            },
+            "keyboard": {
+                "type": "buttons",
+                "buttons": defaultMenu
+            }
+        };
+    }
+    else if(content.includes("등록하기")){
         answer = {
             // 카카오톡 user_id가 등록되지 않은경우
             "message":{
@@ -81,7 +100,7 @@ app.post('/message', function(req,res){
             },
             "keyboard": {
                 "type": "buttons",
-                "buttons": ["대화하기", "식물 선택하기", "사용법"]
+                "buttons": defaultMenu
             }
         };
     }
@@ -92,7 +111,7 @@ app.post('/message', function(req,res){
             },
             "keyboard": {
                 "type": "buttons",
-                "buttons": ["대화하기", "식물 선택하기", "사용법"]
+                "buttons": defaultMenu
             }
         };
     }
@@ -104,7 +123,7 @@ app.post('/message', function(req,res){
             },
             "keyboard": {
                 "type": "buttons",
-                "buttons": ["대화하기", "식물 선택하기", "사용법"]
+                "buttons": defaultMenu
             }
         };
     }
@@ -115,7 +134,7 @@ app.post('/message', function(req,res){
             },
             "keyboard": {
                 "type": "buttons",
-                "buttons": ["대화하기", "식물 선택하기", "사용법"]
+                "buttons": defaultMenu
             }
         };
     }

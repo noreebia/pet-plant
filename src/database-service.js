@@ -79,9 +79,32 @@ exports.registerKakaotalkId = function (email, kakaotalkId) {
                 reject(new Error("Error querying database"));
             }
             console.log(rows);
-            // let result = rows[0];
-            // isValid = Boolean(result[Object.keys(result)[0]]);
-            // resolve(new DTO(isValid));
+            resolve(rows);
+        })
+    })
+}
+
+exports.isRegisteredId = function (kakaotalkId) {
+    return new Promise((resolve, reject)=>{
+        let query = `SELECT count(*) FROM user WHERE email =  (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}' ) AND kakaotalk_id IS NULL;`;
+        db.connection.query(query, (err, rows) => {
+            if (err) {
+                reject(new Error("Error querying database"));
+            }
+            console.log(rows);
+            resolve(rows);
+        })
+    })
+}
+
+exports.registeredList = function (kakaotalkId) {
+    return new Promise((resolve, reject)=>{
+        let query = `SELECT id FROM plant WHERE owner_email = (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}' );`;
+        db.connection.query(query, (err, rows) => {
+            if (err) {
+                reject(new Error("Error querying database"));
+            }
+            console.log(rows);
             resolve(rows);
         })
     })
