@@ -114,7 +114,7 @@ exports.getPlantIdsByKakaotalkId = function (kakaotalkId) {
 exports.registerPlant = (plantId, userEmail, species, nickname) => {
     return new Promise((resolve, reject) => {
         let query = `INSERT INTO plant (id, owner_email, species, nickname)  
-        VALUES ( ${plantId}, '${userEmail}', '${species}', '${nickname}'); `;
+        VALUES ( '${plantId}', '${userEmail}', '${species}', '${nickname}'); `;
         db.connection.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
