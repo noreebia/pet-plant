@@ -97,7 +97,7 @@ exports.isRegisteredId = function (kakaotalkId) {
     })
 }
 
-exports.getPlantIdsByKakaotalkId = function (kakaotalkId) {
+exports.getPlantIdsOfKakaotalkUser = function (kakaotalkId) {
     return new Promise((resolve, reject) => {
         let query = `SELECT id FROM plant WHERE owner_email LIKE (SELECT email FROM user WHERE kakaotalk_id LIKE '${kakaotalkId}');`;
         db.connection.query(query, (err, rows) => {
