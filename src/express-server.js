@@ -4,8 +4,8 @@ const express = require('express'),
     userRouter = require('./routers/user-router'),
     imageRouter = require('./routers/img-router'),
     databaseService = require('./database-service'),
-    app = express();
     udpServer = require('./udp-server'),
+    app = express();
 
 // middlewares
 app.use(bodyParser.json());
@@ -50,10 +50,12 @@ app.post('/message', function (req, res) {
     console.log(content);
 
     if (content.includes("식물 선택하기")) {
-        let list = [];
+        let plantIds = [];
         databaseService.registeredList(user_key)
             .then((result) => {
-                console.log(result)
+                result.details.forEach(function (id) {
+                    plantIds.push(id);
+                });
             })
 
         answer = {
