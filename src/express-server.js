@@ -51,10 +51,10 @@ app.post('/message', function (req, res) {
 
     if (content.includes("식물 선택하기")) {
         let plantIds = [];
-        databaseService.getPlantIdsOfKakaotalkUser(user_key)
+        databaseService.getPlantsOfKakaotalkUser(user_key)
             .then((result) => {
                 result.details.forEach(function (id) {
-                    plantIds.push(id);
+                    plantIds.push(`${plantIds.length+1}번 식물: ${id}`);
                 });
             })
 
@@ -64,7 +64,7 @@ app.post('/message', function (req, res) {
             },
             "keyboard": {
                 "type": "buttons",
-                "buttons": ["식물: 1번 식물", "식물: 2번 식물"]
+                "buttons": plantIds
             }
         };
     }
