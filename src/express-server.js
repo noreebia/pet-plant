@@ -51,7 +51,7 @@ app.post('/message', function (req, res) {
 
     if (content.includes("식물 선택하기")) {
         let plantIds = [];
-        databaseService.registeredList(user_key)
+        databaseService.getPlantIdsOfKakaotalkUser(user_key)
             .then((result) => {
                 result.details.forEach(function (id) {
                     plantIds.push(id);
