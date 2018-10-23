@@ -1,5 +1,6 @@
 var dgram = require('dgram');
 var server = dgram.createSocket('udp4');
+const databaseService = require('./database-service');
 
 var PORT = 8080;
 var HOST = '0.0.0.0';
@@ -12,6 +13,13 @@ server.on('listening', () => {
 });
 
 server.on('message', (message, remote) => {
-    console.log(remote.address + ':' + remote.port +' - ' + message);
+    let messageToStringArray = message.toString().split("::");
+
+    let plantId = messageToStringArray[0];
+    let illuminationLevel = messageToStringArray[1];
+    let temperatureLevel = messageToStringArray[2];
+    let moistureLevel = messageToStringArray[3];
+
+    databaseService.saveLog(plantId, illuminationLevel, temperatureLevel, moistureLevel)
 });
 

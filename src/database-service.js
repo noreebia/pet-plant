@@ -62,7 +62,6 @@ exports.isValidCredentials = function (email, password) {
             if (err) {
                 reject(new DTO(false, err));
             }
-            console.log(rows);
             let result = rows[0];
             isValid = Boolean(result[Object.keys(result)[0]]);
             resolve(new DTO(isValid));
@@ -117,6 +116,20 @@ exports.registerPlant = (plantId, userEmail, species, nickname) => {
         VALUES ( '${plantId}', '${userEmail}', '${species}', '${nickname}'); `;
         db.connection.query(query, (err, rows) => {
             if (err) {
+                console.log(err);
+                reject(new DTO(false, err));
+            }
+            resolve(new DTO(true));
+        })
+    })
+}
+
+exports.saveLog = (plantId, illuminationLevel, temperatureLevel, moistureLevel) => {
+    return new Promise((resolve, reject) => {
+        let query = `INSERT INTO plant_log (plant_id, illumination_level, temperature_level, moisture_level) VALUES
+        ('${plantId}', ${illuminationLevel}, ${temperatureLevel}, ${moistureLevel});`;
+        db.connection.query(query, (err, rows)=>{
+            if(err){
                 console.log(err);
                 reject(new DTO(false, err));
             }

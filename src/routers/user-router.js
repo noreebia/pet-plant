@@ -31,7 +31,8 @@ router.post('/register_kakao', function (req, res) {
     let kakao = req.body.kakaoID;
 
     databaseService.registerKakaotalkId(email, kakao)
-    .then((result)=> res.render('success'))
+    .then(()=> res.render('success'))
+    .catch((error)=> res.json(error));
 })
 
 router.post('/plants', function (req, res) {
