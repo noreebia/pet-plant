@@ -14,7 +14,7 @@ import cv2
 
 col_size = 112
 row_size = 112
-output = 2
+output = 5
 filter_pix = 3
 
 # 랜덤시드 고정시키기
@@ -40,7 +40,7 @@ train_generator = train_datagen.flow_from_directory(
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 test_generator = test_datagen.flow_from_directory(
-        'C://Project/my-pet-plant/image_classification_module/data/test',
+        'C://Project/my-pet-plant/image_classification_module/data/validation',
         target_size=(col_size, row_size),    
         batch_size=5,
         class_mode='categorical')
