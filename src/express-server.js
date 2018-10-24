@@ -57,6 +57,9 @@ app.post('/message', function (req, res) {
                     plantIds.push(`${plantIds.length+1}번 식물: ${id}`);
                 });
             })
+            if(plantIds.length == 0){
+                plantIds.push("등록된 기기가 없습니다. 앱에서 기기 등록을 해주세요!");
+            }
 
         answer = {
             "message": {

@@ -14,6 +14,12 @@ router.get('/:userEmail', function (req, res) {
     .catch((error) => res.json(new DTO(false, error.message)))
 })
 
+router.get('/:userEmail/plants', function (req, res) {
+    databaseService.getPlantsOfUser(req.params.userEmail)
+    .then((result) => res.json(result))
+    .catch((error) => res.json(error))
+})
+
 router.post('/validation',(req, res)=>{
     databaseService.isValidCredentials(req.body.email, req.body.password)
     .then((result)=>res.json(result))

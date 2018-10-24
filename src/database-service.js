@@ -137,3 +137,17 @@ exports.saveLog = (plantId, illuminationLevel, temperatureLevel, moistureLevel) 
         })
     })
 }
+
+exports.getPlantsOfUser = (username)=>{
+    return new Promise((resolve, reject)=>{
+        let query = `SELECT * FROM plant WHERE owner_email like '${username}';`;
+        db.connection.query(query, (err, rows)=>{
+            if(err){
+                console.log(err);
+                reject(new DTO(false, err));
+            }
+            console.log(rows);
+            resolve(new DTO(true, rows));
+        })
+    })
+}
