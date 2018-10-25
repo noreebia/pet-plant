@@ -53,13 +53,14 @@ app.post('/message', function (req, res) {
         let plantIds = [];
         databaseService.getPlantsOfKakaotalkUser(user_key)
             .then((result) => {
-                result.details.forEach(function (id) {
-                    plantIds.push(`${plantIds.length+1}번 식물: ${id}`);
+                result.details.forEach(function(nickname) {
+                    plantIds.push(`${plantIds.length+1}번 식물: ${nickname}`);
                 });
             })
             if(plantIds.length == 0){
                 plantIds.push("등록된 기기가 없습니다. 앱에서 기기 등록을 해주세요!");
             }
+            console.log(plantIds);
 
         answer = {
             "message": {

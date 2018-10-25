@@ -19,7 +19,7 @@ const mysql = require('mysql');
 
 // exports.connection = connection;
 
-var pool = mysql.createConnection({
+pool = mysql.createConnection({
     connectionLimit: 100,
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -27,6 +27,6 @@ var pool = mysql.createConnection({
     database: process.env.DB_DATABASE
 });
 
-exports.connection = pool;
 
 
+module.exports = pool;

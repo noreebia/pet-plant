@@ -13,13 +13,16 @@ server.on('listening', () => {
 });
 
 server.on('message', (message, remote) => {
-    let messageToStringArray = message.toString().split("::");
+    try{
+        let messageToStringArray = message.toString().split("::");
 
-    let plantId = messageToStringArray[0];
-    let illuminationLevel = messageToStringArray[1];
-    let temperatureLevel = messageToStringArray[2];
-    let moistureLevel = messageToStringArray[3];
-
-    databaseService.saveLog(plantId, illuminationLevel, temperatureLevel, moistureLevel)
-});
+        let plantId = messageToStringArray[0];
+        let illuminationLevel = messageToStringArray[1];
+        let temperatureLevel = messageToStringArray[2];
+        let moistureLevel = messageToStringArray[3];
+    
+        databaseService.saveLog(plantId, illuminationLevel, temperatureLevel, moistureLevel)    
+    } catch(err){
+        console.log("Received sensor input but format did not match. Received message: " + message);
+    }});
 

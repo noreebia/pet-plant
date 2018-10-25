@@ -52,6 +52,38 @@ router.post('/plants', function (req, res) {
     .catch((error) => res.json(error))
 })
 
+router.post('/plantselection', function (req, res) {
+    let nickname = req.body.nickname;
+    let kakaotalkId = req.body.kakaotalkId;
+    console.log(kakaotalkId);
+    databaseService.selectPlant(nickname, kakaotalkId)
+    .then((result)=> res.json(result))
+    .catch((error) => res.json(error))
+})
+
+router.post('/plantselection/selection', function (req, res) {
+    let kakaotalkId = req.body.kakaotalkId;
+    databaseService.getEmailOfKakaotalkUser(kakaotalkId)
+    .then((result)=> res.json(result))
+    .catch((error) => res.json(error))
+})
+
+router.post('/test/test/test', function (req, res) {
+    let kakaotalkId = req.body.kakaotalkId;
+    
+    databaseService.getPlantsOfKakaotalkUser(kakaotalkId)
+    .then((result)=> res.json(result))
+    .catch((error) => res.json(error))
+})
+
+router.post('/test/test/test/:kakaotalkId', function (req, res) {
+    let kakaotalkId = req.body.kakaotalkId;
+    
+    databaseService.getEmailOfKakaotalkUser(kakaotalkId)
+    .then((result)=> res.json(result))
+    .catch((error) => res.json(error))
+})
+
 // router.post('/test/test/test', function (req, res) {
 //     let kakaotalkId = req.body.kakaotalkId;
     
