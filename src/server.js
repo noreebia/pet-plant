@@ -2,9 +2,11 @@ require('dotenv').config();
 const express = require('express'),
     bodyParser = require('body-parser'),
     userRouter = require('./routers/user-router'),
-    imageRouter = require('./routers/img-router'),
+    imageRouter = require('./routers/image-router'),
     databaseService = require('./database-service'),
     udpServer = require('./udp-server'),
+    multer  = require('multer'),
+    upload = multer({ dest: '/images' }),
     app = express();
 
 // middlewares
@@ -119,8 +121,10 @@ app.post('/message', function (req, res) {
             }
         };
     }
-    else if (content.includes("식물:")) {
-        let selection = content.split("식물: ")[1];
+    else if (content.includes("식물: ")) {
+        
+        let selectedPlantNickname = content.split("식물: ")[1];
+        databaseService.selectPlant(selectedPlantNickname, user_key);
         answer = {
             "message": {
                 "text": selection
