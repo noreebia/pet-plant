@@ -8,11 +8,7 @@ router.use(function (req, res, next) {
     next();
 })
 
-router.get('/:userEmail', function (req, res) {
-    databaseService.getUserByEmail(req.params.userEmail)
-    .then((result) => res.json(new DTO(true, result)))
-    .catch((error) => res.json(new DTO(false, error.message)))
-})
+
 
 router.get('/:userEmail/plants', function (req, res) {
     databaseService.getPlantsOfUser(req.params.userEmail)
@@ -64,6 +60,12 @@ router.post('/plantselection', function (req, res) {
 // submit page
 router.get('/kakaotalk-registration', function (req, res) {
     res.render('kakaotalk-registration');
+})
+
+router.get('/:userEmail', function (req, res) {
+    databaseService.getUserByEmail(req.params.userEmail)
+    .then((result) => res.json(new DTO(true, result)))
+    .catch((error) => res.json(new DTO(false, error.message)))
 })
 
 module.exports = router;

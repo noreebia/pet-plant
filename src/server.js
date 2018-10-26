@@ -3,9 +3,11 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     userRouter = require('./routers/user-router'),
     imageRouter = require('./routers/image-router'),
+    keyboardRouter = require('./routers/keyboard'),
+    messageRouter = require('./routers/message'),
     databaseService = require('./database-service'),
     udpServer = require('./udp-server'),
-    chatbot = require('./chatbot'),
+    // chatbot = require('./chatbot'),
     app = express();
 
 // middlewares
@@ -20,6 +22,8 @@ app.engine('html', require('ejs').renderFile);
 // routers
 app.use('/users', userRouter);
 app.use('/images', imageRouter);
+app.use('/keyboard', keyboardRouter);
+app.use('/message', messageRouter);
 
 // default route for health check
 app.get('/', function (req, res) {
@@ -27,13 +31,8 @@ app.get('/', function (req, res) {
 })
 
 // chatbot api
-app.get('/keyboard', chatbot.sendKeyboard);
-app.post('/message', chatbot.handleMessage);
-
-// submit page
-app.get('/submit', function (req, res) {
-    res.render('submit');
-})
+// app.get('/keyboard', chatbot.sendKeyboard(req, res));
+// app.post('/message', chatbot.handleMessage(req, res));
 
 var server = app.listen(8080, function () {
     var host = server.address().address

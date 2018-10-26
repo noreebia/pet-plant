@@ -1,12 +1,8 @@
-exports.sendKeyboard = function (req, res) {
-    let answer = {
-        "type": "buttons",
-        "buttons": ["등록하기", "대화하기", "식물 선택하기", "사용법"]
-    };
-    res.send(answer);
-}
-
-exports.handleMessage = function(req, res) {
+var express = require('express');
+var router = express.Router();
+var databaseService = require('../database-service');
+/* 처음 들어왔을 때 */
+router.post('/', function(req, res) {
     let user_key = decodeURIComponent(req.body.user_key); // user's key
     let type = decodeURIComponent(req.body.type); // message type
     let content = decodeURIComponent(req.body.content); // user's message
@@ -120,4 +116,6 @@ exports.handleMessage = function(req, res) {
         };
     }
     res.send(answer);
-}
+});
+
+module.exports = router;
