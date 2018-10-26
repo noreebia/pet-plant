@@ -52,12 +52,13 @@ router.post('/plants', function (req, res) {
     .catch((error) => res.json(error))
 })
 
-// router.post('/test/test/test', function (req, res) {
-//     let kakaotalkId = req.body.kakaotalkId;
-    
-//     databaseService.getPlantIdsByKakaotalkId(kakaotalkId)
-//     .then((result)=> res.json(result))
-//     .catch((error) => res.json(error))
-// })
+router.post('/plantselection', function (req, res) {
+    let nickname = req.body.nickname;
+    let kakaotalkId = req.body.kakaotalkId;
+    console.log(kakaotalkId);
+    databaseService.selectPlant(nickname, kakaotalkId)
+    .then((result)=> res.json(result))
+    .catch((error) => res.json(error))
+})
 
 module.exports = router;

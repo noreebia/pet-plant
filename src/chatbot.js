@@ -1,45 +1,12 @@
-require('dotenv').config();
-const express = require('express'),
-    bodyParser = require('body-parser'),
-    userRouter = require('./routers/user-router'),
-    imageRouter = require('./routers/img-router'),
-    databaseService = require('./database-service'),
-    udpServer = require('./udp-server'),
-    app = express();
-
-// middlewares
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// html
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
-app.engine('html', require('ejs').renderFile);
-
-// routers
-app.use('/users', userRouter);
-app.use('/images', imageRouter);
-
-// default route for health check
-app.get('/', function (req, res) {
-    res.send("I'm healthy!");
-})
-
-// chatbot api route
-app.get('/keyboard', function (req, res) {
+exports.sendKeyboard = (req, res) => {
     let answer = {
         "type": "buttons",
         "buttons": ["등록하기", "대화하기", "식물 선택하기", "사용법"]
     };
     res.send(answer);
-})
+}
 
-// submit page
-app.get('/submit', function (req, res) {
-    res.render('submit');
-})
-
-app.post('/message', function (req, res) {
+exports.handleMessage = (req, res) => {
     let user_key = decodeURIComponent(req.body.user_key); // user's key
     let type = decodeURIComponent(req.body.type); // message type
     let content = decodeURIComponent(req.body.content); // user's message
@@ -53,13 +20,14 @@ app.post('/message', function (req, res) {
         let plantIds = [];
         databaseService.getPlantsOfKakaotalkUser(user_key)
             .then((result) => {
-                result.details.forEach(function (id) {
-                    plantIds.push(`${plantIds.length+1}번 식물: ${id}`);
+                result.details.forEach(function(nickname) {
+                    plantIds.push(`${plantIds.length+1}번 식물: ${nickname}`);
                 });
             })
             if(plantIds.length == 0){
                 plantIds.push("등록된 기기가 없습니다. 앱에서 기기 등록을 해주세요!");
             }
+            console.log(plantIds);
 
         answer = {
             "message": {
@@ -91,7 +59,7 @@ app.post('/message', function (req, res) {
                 "text": "USER ID: " + user_key + "\n등록방법!\n1. 하단 링크를 클릭해주세요.\n2. PetPlant 아이디와 상단의 유저 ID를 입력해주세요.\n 3.등록버튼을 누르시면 끝!",//+content  in case 'text'
                 "message_button": {
                     "label": "등록하러 가기.",
-                    "url": "http://117.16.136.73:8080/submit"
+                    "url": "http://117.16.136.73:8080/users/kakaotalk-registration"
                 }
             }
         };
@@ -118,8 +86,18 @@ app.post('/message', function (req, res) {
             }
         };
     }
-    else if (content.includes("식물:")) {
-        let selection = content.split("식물: ")[1];
+    else if (content.includes("식물: ")) {
+        
+        let selectedPlantNickname = content.split("식물: ")[1];
+
+        let response;
+        try{
+            databaseService.selectPlant(selectedPlantNickname, user_key);
+        } catch(err){
+            response = "알 수 없는 오류입니다.";
+        }
+        response = `저는 ${selectedPlantNickname}입니다.}`;
+
         answer = {
             "message": {
                 "text": selection
@@ -142,10 +120,4 @@ app.post('/message', function (req, res) {
         };
     }
     res.send(answer);
-});
-
-var server = app.listen(8080, function () {
-    var host = server.address().address
-    var port = server.address().port
-    console.log("Express app listening at http://%s:%s", host, port)
-})
+}
