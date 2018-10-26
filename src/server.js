@@ -5,16 +5,14 @@ const express = require('express'),
     imageRouter = require('./routers/image-router'),
     keyboardRouter = require('./routers/keyboard'),
     messageRouter = require('./routers/message'),
-    databaseService = require('./database-service'),
     udpServer = require('./udp-server'),
-    // chatbot = require('./chatbot'),
     app = express();
 
 // middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// html
+// template engine
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
@@ -29,10 +27,6 @@ app.use('/message', messageRouter);
 app.get('/', function (req, res) {
     res.send("I'm healthy!");
 })
-
-// chatbot api
-// app.get('/keyboard', chatbot.sendKeyboard(req, res));
-// app.post('/message', chatbot.handleMessage(req, res));
 
 var server = app.listen(8080, function () {
     var host = server.address().address
