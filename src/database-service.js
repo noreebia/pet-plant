@@ -207,3 +207,9 @@ exports.selectPlant = async (plantNickname, kakaotalkId) => {
         console.log(err);
     }
 }
+
+exports.getNicknameOfSelectedPlant = () => {
+    return new Promise((resolve, reject)=>{
+
+    })
+}
