@@ -8,8 +8,6 @@ router.use(function (req, res, next) {
     next();
 })
 
-
-
 router.get('/:userEmail/plants', function (req, res) {
     databaseService.getPlantsOfUser(req.params.userEmail)
     .then((result) => res.json(result))
@@ -48,16 +46,6 @@ router.post('/plants', function (req, res) {
     .catch((error) => res.json(error))
 })
 
-router.post('/plantselection', function (req, res) {
-    let nickname = req.body.nickname;
-    let kakaotalkId = req.body.kakaotalkId;
-    console.log(kakaotalkId);
-    databaseService.selectPlant(nickname, kakaotalkId)
-    .then((result)=> res.json(result))
-    .catch((error) => res.json(error))
-})
-
-// submit page
 router.get('/kakaotalk-registration', function (req, res) {
     res.render('kakaotalk-registration');
 })
@@ -66,6 +54,17 @@ router.get('/:userEmail', function (req, res) {
     databaseService.getUserByEmail(req.params.userEmail)
     .then((result) => res.json(new DTO(true, result)))
     .catch((error) => res.json(new DTO(false, error.message)))
+})
+
+// testing purposes
+
+router.post('/plant-selection', function (req, res) {
+    let nickname = req.body.nickname;
+    let kakaotalkId = req.body.kakaotalkId;
+    console.log(kakaotalkId);
+    databaseService.selectPlant(nickname, kakaotalkId)
+    .then((result)=> res.json(result))
+    .catch((error) => res.json(error))
 })
 
 module.exports = router;
