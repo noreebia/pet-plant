@@ -61,4 +61,9 @@ router.post('/plantselection', function (req, res) {
     .catch((error) => res.json(error))
 })
 
+// submit page
+router.get('/kakaotalk-registration', function (req, res) {
+    res.render('kakaotalk-registration');
+})
+
 module.exports = router;
