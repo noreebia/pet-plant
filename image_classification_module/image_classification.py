@@ -12,9 +12,9 @@ import keras.backend.tensorflow_backend as K
 import PIL
 import cv2
 
-col_size = 112
-row_size = 112
-output = 5
+col_size = 224
+row_size = 224
+output = 2
 filter_pix = 3
 
 # 랜덤시드 고정시키기
@@ -34,7 +34,7 @@ train_datagen = ImageDataGenerator(rescale=1./255,
 train_generator = train_datagen.flow_from_directory(
         'C://Project/my-pet-plant/image_classification_module/data/train',
         target_size=(col_size, row_size),
-        batch_size=5,
+        batch_size=8,
         class_mode='categorical')
 
 test_datagen = ImageDataGenerator(rescale=1./255)
@@ -42,7 +42,7 @@ test_datagen = ImageDataGenerator(rescale=1./255)
 test_generator = test_datagen.flow_from_directory(
         'C://Project/my-pet-plant/image_classification_module/data/validation',
         target_size=(col_size, row_size),    
-        batch_size=5,
+        batch_size=8,
         class_mode='categorical')
 
 # 2. 모델 구성하기
@@ -57,7 +57,7 @@ with K.tf.device('/gpu:0'):
         model.add(Conv2D(128, (filter_pix, filter_pix), activation='relu'))
         model.add(Conv2D(128, (filter_pix, filter_pix), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
-        """
+        
         model.add(Conv2D(256, (filter_pix, filter_pix), activation='relu'))
         model.add(Conv2D(256, (filter_pix, filter_pix), activation='relu'))
         model.add(Conv2D(256, (filter_pix, filter_pix), activation='relu'))
@@ -70,11 +70,12 @@ with K.tf.device('/gpu:0'):
         model.add(Conv2D(512, (filter_pix, filter_pix), activation='relu'))
         model.add(Conv2D(512, (filter_pix, filter_pix), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
-        """
+        
+
         model.add(Flatten())
-        model.add(Dense(128, activation='relu'))
+        model.add(Dense(4096, activation='relu'))
         model.add(Dropout(0.5))
-        model.add(Dense(128, activation='relu'))
+        model.add(Dense(4096, activation='relu'))
         model.add(Dropout(0.5))
 
         model.add(Dense(output, activation='softmax'))
@@ -88,10 +89,10 @@ with K.tf.device('/gpu:0'):
 
         hist = model.fit_generator(
                 train_generator,
-                steps_per_epoch=15,
+                steps_per_epoch=50,
                 epochs=50,
                 validation_data=test_generator,
-                validation_steps=3,
+                validation_steps=10,
                 callbacks=[early_stopping])
 
 # 5. 모델 평가하기

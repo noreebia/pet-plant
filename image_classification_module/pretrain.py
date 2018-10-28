@@ -1,7 +1,7 @@
 from keras.applications.vgg16 import VGG16
 from keras.preprocessing import image
 from keras.applications.vgg16 import preprocess_input
-from keras.layers import Input, Flatten, Dense
+from keras.layers import Input, Flatten, Dense, Dropout
 from keras.models import Model
 from keras.optimizers import SGD
 import numpy as np
@@ -9,9 +9,12 @@ from keras.preprocessing.image import ImageDataGenerator
 import keras.backend.tensorflow_backend as K
 
 # 상수 정의
-col_size = 56
-row_size = 56
+col_size = 224
+row_size = 224
 output = 2
+
+# 랜덤시드 고정시키기
+np.random.seed(3)
 
 # 데이터셋 불러오기
 train_datagen = ImageDataGenerator(rescale=1./255, 
@@ -26,7 +29,7 @@ train_datagen = ImageDataGenerator(rescale=1./255,
 train_generator = train_datagen.flow_from_directory(
         'C://Project/my-pet-plant/image_classification_module/data/train',
         target_size=(col_size, row_size),
-        batch_size=3,
+        batch_size=8,
         class_mode='categorical')
 
 test_datagen = ImageDataGenerator(rescale=1./255)
@@ -34,7 +37,7 @@ test_datagen = ImageDataGenerator(rescale=1./255)
 test_generator = test_datagen.flow_from_directory(
         'C://Project/my-pet-plant/image_classification_module/data/validation',
         target_size=(col_size, row_size),    
-        batch_size=3,
+        batch_size=8,
         class_mode='categorical')
 
 
@@ -53,8 +56,9 @@ with K.tf.device('/gpu:0'):
     
     # 아웃풋 레이어 추가
     x = Flatten(name='flatten')(output_vgg16_conv)
-    x = Dense(256, activation='relu', name='fc1')(x)
-    x = Dense(256, activation='relu', name='fc2')(x)
+    x = Dense(4096, activation='relu', name='fc1')(x)
+    x = Dropout(0.5)(x)
+    x = Dense(4096, activation='relu', name='fc2')(x)
     x = Dense(output, activation='softmax', name='predictions')(x)
 
     # 새롭게 정의된 PetPlant용 모델 
@@ -64,7 +68,9 @@ with K.tf.device('/gpu:0'):
     my_model.summary()
 
     # 3. 모델 학습과정 설정하기
-    my_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+
+    my_model.compile(loss='categorical_crossentropy', optimizer="adam", metrics=['accuracy'])
 
     # 4. 모델 학습시키기
     from keras.callbacks import EarlyStopping
@@ -72,11 +78,10 @@ with K.tf.device('/gpu:0'):
 
     hist = my_model.fit_generator(
             train_generator,
-            steps_per_epoch=50,
+            steps_per_epoch=60,
             epochs=50,
             validation_data=test_generator,
-            validation_steps=5,
-            callbacks=[early_stopping])
+            validation_steps=20)
 
 # 5. 모델 평가하기
 print("-- Evaluate --")
