@@ -197,9 +197,9 @@ setSelectedPlant = (email, plantNickname) => {
     })
 }
 
-exports.selectPlant = async (plantNickname, kakaotalkId) => {
+exports.selectPlant = async (plantNickname, email) => {
     try{
-        let email = await getEmailOfKakaotalkUser(kakaotalkId);
+        // let email = await getEmailOfKakaotalkUser(kakaotalkId);
         let refreshPlantSelectionOf2 = await refreshPlantSelectionOf(email, plantNickname);
         let setSelectedPlant2 = await setSelectedPlant(email, plantNickname);
         return setSelectedPlant2;

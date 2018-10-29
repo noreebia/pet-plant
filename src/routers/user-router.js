@@ -60,9 +60,9 @@ router.get('/:userEmail', function (req, res) {
 
 router.post('/plant-selection', function (req, res) {
     let nickname = req.body.nickname;
-    let kakaotalkId = req.body.kakaotalkId;
-    console.log(kakaotalkId);
-    databaseService.selectPlant(nickname, kakaotalkId)
+    let email = req.body.email;
+    console.log(email);
+    databaseService.selectPlant(nickname, email)
     .then((result)=> res.json(result))
     .catch((error) => res.json(error))
 })

@@ -7,11 +7,11 @@ router.post('/', function(req, res) {
     let type = decodeURIComponent(req.body.type); // message type
     let content = decodeURIComponent(req.body.content); // user's message
     let answer;
-    let defaultMenu = ["등록하기", "대화하기", "식물 선택하기", "사용법"];
+    let defaultMenu = ["등록하기", "대화하기", "사용법"];
     console.log(user_key);
     console.log(type);
     console.log(content);
-
+    /*
     if (content.includes("식물 선택하기")) {
         let plantIds = [];
         databaseService.getPlantsOfKakaotalkUser(user_key)
@@ -34,8 +34,8 @@ router.post('/', function(req, res) {
                 "buttons": plantIds
             }
         };
-    }
-    else if (content.includes("대화하기")) {
+    }*/
+    if (content.includes("대화하기")) {
         databaseService.getPlantsOfKakaotalkUser(user_key)
             .then((result) => {
                 console.log(result)
@@ -104,16 +104,36 @@ router.post('/', function(req, res) {
             }
         };
     }
-    else {
-        answer = {
-            "message": {
-                "text": "죄송합니다. 알 수 없는 질문입니다."
-            },
-            "keyboard": {
-                "type": "buttons",
-                "buttons": defaultMenu
-            }
-        };
+    else { // 
+        if(content.includes("테스트")){
+            answer = {
+                "message": {
+                    "text": "이것은 테스트입니다. 종료를 누르면 대화를 종료합니다."
+                }
+            };
+        }
+        else if(content.includes("종료")){
+            answer = {
+                "message": {
+                    "text": "나중에 또 대화해요!"
+                },
+                "keyboard": {
+                    "type": "buttons",
+                    "buttons": defaultMenu
+                }
+            };
+        }
+        else{
+            answer = {
+                "message": {
+                    "text": "죄송합니다. 알 수 없는 질문입니다."
+                },
+                "keyboard": {
+                    "type": "buttons",
+                    "buttons": defaultMenu
+                }
+            };
+        }    
     }
     res.send(answer);
 });

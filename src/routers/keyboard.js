@@ -5,7 +5,7 @@ var router = express.Router();
 router.get('/', function (req, res) {
     let answer = {
         "type": "buttons",
-        "buttons": ["등록하기", "대화하기", "식물 선택하기", "사용법"]
+        "buttons": ["등록하기", "대화하기", "사용법"]
     };
     res.send(answer);
 });
