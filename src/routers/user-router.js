@@ -75,4 +75,12 @@ router.get('/plants/selection/:userEmail', function (req, res) {
     .catch((error) => res.json(error))
 })
 
+router.get('/plants/logs/:userEmail', (req, res)=>{
+    let email = req.params.userEmail;
+    console.log(email);
+    databaseService.getMostRecentLogOfSelectedPlant(email)
+    .then((result)=> res.json(result))
+    .catch((error) => res.json(error))  
+})
+
 module.exports = router;

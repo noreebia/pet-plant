@@ -220,3 +220,17 @@ exports.getSelectedPlantOfUser = (userEmail) => {
         })
     })
 }
+
+exports.getMostRecentLogOfSelectedPlant = (userEmail) => {
+    return new Promise((resolve, reject)=>{
+        let query = `SELECT * FROM plant_log WHERE plant_id = (SELECT id FROM plant WHERE owner_email = '${userEmail}' AND SELECTED = 1) ORDER BY recorded_date DESC LIMIT 1;`;
+        pool.query(query, (err, rows) => {
+            if (err) {
+                console.log(err);
+                reject(new DTO(false, err));
+            }
+            resolve(new DTO(true, rows));
+        })
+    })
+}
+
