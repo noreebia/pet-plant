@@ -4,3 +4,5 @@ node_modules
 image_classification_module/data/
 images/**
 image_classification_module/contour/
+
+image_classification_module/OriginalData/

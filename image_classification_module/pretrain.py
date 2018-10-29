@@ -12,6 +12,19 @@ import keras.backend.tensorflow_backend as K
 col_size = 224
 row_size = 224
 output = 2
+EPOCH = 50
+
+def sigmoidal_decay(e, start=0, end=100, lr_start=1e-3, lr_end=1e-5):
+    if e < start:
+        return lr_start
+    
+    if e > end:
+        return lr_end
+    
+    middle = (start + end) / 2
+    s = lambda x: 1 / (1 + np.exp(-x))
+    
+    return s(13 * (-e + middle) / np.abs(end - start)) * np.abs(lr_start - lr_end) + lr_end
 
 # 랜덤시드 고정시키기
 np.random.seed(3)
@@ -76,12 +89,17 @@ with K.tf.device('/gpu:0'):
     from keras.callbacks import EarlyStopping
     early_stopping = EarlyStopping() # 조기종료 콜백함수 정의
 
+    from keras.callbacks import LearningRateScheduler, ModelCheckpoint
+    mc = ModelCheckpoint('weights.best.keras', monitor='val_acc', save_best_only=True)
+    lr = LearningRateScheduler(lambda e: sigmoidal_decay(e, end=EPOCH))
+
     hist = my_model.fit_generator(
             train_generator,
             steps_per_epoch=60,
-            epochs=50,
+            epochs=EPOCH,
             validation_data=test_generator,
-            validation_steps=20)
+            validation_steps=20,
+            callbacks=[mc, lr])
 
 # 5. 모델 평가하기
 print("-- Evaluate --")

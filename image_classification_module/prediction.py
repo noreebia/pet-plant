@@ -2,18 +2,28 @@
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.layers import Flatten
+from keras.layers import Flatten, Dropout
 from keras.layers.convolutional import Conv2D
 from keras.layers.convolutional import MaxPooling2D
 from keras.preprocessing.image import ImageDataGenerator
 import cv2
 
-# 랜덤시드 고정시키기
-np.random.seed(3)
-
 col_size = 56
 row_size = 56
 output = 2
+EPOCH = 50
+
+def sigmoidal_decay(e, start=0, end=100, lr_start=1e-3, lr_end=1e-5):
+    if e < start:
+        return lr_start
+    
+    if e > end:
+        return lr_end
+    
+    middle = (start + end) / 2
+    s = lambda x: 1 / (1 + np.exp(-x))
+    
+    return s(13 * (-e + middle) / np.abs(end - start)) * np.abs(lr_start - lr_end) + lr_end
 
 # 1. 데이터 생성하기
 train_datagen = ImageDataGenerator(rescale=1./255, 
@@ -29,7 +39,7 @@ train_datagen = ImageDataGenerator(rescale=1./255,
 train_generator = train_datagen.flow_from_directory(
         'C://Project/my-pet-plant/image_classification_module/data/train',
         target_size=(col_size, row_size),
-        batch_size=3,
+        batch_size=32,
         class_mode='categorical')
 
 test_datagen = ImageDataGenerator(rescale=1./255)
@@ -37,7 +47,7 @@ test_datagen = ImageDataGenerator(rescale=1./255)
 test_generator = test_datagen.flow_from_directory(
         'C://Project/my-pet-plant/image_classification_module/data/validation',
         target_size=(col_size, row_size),    
-        batch_size=3,
+        batch_size=32,
         class_mode='categorical')
 
 # 2. 모델 구성하기
@@ -45,27 +55,38 @@ model = Sequential()
 model.add(Conv2D(32, kernel_size=(3, 3),
                  activation='relu',
                  input_shape=(col_size,row_size,3)))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+#model.add(Dropout(0.25))
+#model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+#model.add(Dropout(0.25))
 model.add(Conv2D(128, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Flatten())
 model.add(Dense(256, activation='relu'))
+#model.add(Dropout(0.5))
 model.add(Dense(output, activation='softmax'))
 
 # 3. 모델 학습과정 설정하기
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 from keras.callbacks import EarlyStopping
-early_stopping = EarlyStopping(monitor="val_loss", mode="auto", patience = 3) # 조기종료 콜백함수 정의
+early_stopping = EarlyStopping(monitor="val_loss", mode="auto", patience = 3) 
+
+from keras.callbacks import LearningRateScheduler, ModelCheckpoint
+mc = ModelCheckpoint('weights.best.keras', monitor='val_acc', save_best_only=True)
+lr = LearningRateScheduler(lambda e: sigmoidal_decay(e, end=EPOCH))
+
 
 # 4. 모델 학습시키기
 hist = model.fit_generator(
         train_generator,
-        steps_per_epoch=50,
-        epochs=100,
+        steps_per_epoch=15,
+        epochs=EPOCH,
         validation_data=test_generator,
-        validation_steps=5)
+        validation_steps=5, 
+        callbacks=[lr, mc])
 
 # 5. 모델 평가하기
 print("-- Evaluate --")
