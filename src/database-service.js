@@ -133,7 +133,7 @@ exports.registerPlant = (deviceId, userEmail, species, nickname) => {
 exports.saveLog = (deviceId, illuminationLevel, temperatureLevel, moistureLevel) => {
     return new Promise((resolve, reject) => {
         let query = `INSERT INTO plant_log (plant_id, illumination_level, temperature_level, moisture_level) VALUES
-        ( (SELECT id FROM plant WHERE device_id = '${deviceId}', ${illuminationLevel}, ${temperatureLevel}, ${moistureLevel});`;
+        ( (SELECT id FROM plant WHERE device_id = '${deviceId}'), ${illuminationLevel}, ${temperatureLevel}, ${moistureLevel});`;
         pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
