@@ -118,7 +118,7 @@ exports.getPlantsOfKakaotalkUser = function (kakaotalkId) {
 
 exports.registerPlant = (deviceId, userEmail, species, nickname) => {
     return new Promise((resolve, reject) => {
-        let query = `INSERT INTO plant (id, device_id owner_email, species, nickname)  
+        let query = `INSERT INTO plant (id, device_id, owner_email, species, nickname)  
         VALUES ( default, '${deviceId}', '${userEmail}', '${species}', '${nickname}'); `;
         pool.query(query, (err, rows) => {
             if (err) {
