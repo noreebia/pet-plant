@@ -100,9 +100,12 @@ exports.isRegisteredId = function (kakaotalkId) {
     })
 }
 
+/** */
 exports.getPlantsOfKakaotalkUser = function (kakaotalkId) {
     return new Promise((resolve, reject) => {
-        let query = `SELECT nickname FROM plant WHERE owner_email LIKE (SELECT email FROM user WHERE kakaotalk_id LIKE '${kakaotalkId}');`;
+        // let query = `SELECT nickname FROM plant WHERE owner_email = (SELECT email FROM user WHERE kakaotalk_id LIKE '${kakaotalkId}');`;
+
+        let query = `SELECT nickname FROM plant WHERE owner_email = (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}');`;
         pool.query(query, (err, rows) => {
             if (err) {
                 reject(new DTO(false, err));
@@ -113,10 +116,10 @@ exports.getPlantsOfKakaotalkUser = function (kakaotalkId) {
     })
 }
 
-exports.registerPlant = (plantId, userEmail, species, nickname) => {
+exports.registerPlant = (deviceId, userEmail, species, nickname) => {
     return new Promise((resolve, reject) => {
-        let query = `INSERT INTO plant (id, owner_email, species, nickname)  
-        VALUES ( '${plantId}', '${userEmail}', '${species}', '${nickname}'); `;
+        let query = `INSERT INTO plant (id, device_id owner_email, species, nickname)  
+        VALUES ( default, '${deviceId}', '${userEmail}', '${species}', '${nickname}'); `;
         pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
@@ -127,10 +130,10 @@ exports.registerPlant = (plantId, userEmail, species, nickname) => {
     })
 }
 
-exports.saveLog = (plantId, illuminationLevel, temperatureLevel, moistureLevel) => {
+exports.saveLog = (deviceId, illuminationLevel, temperatureLevel, moistureLevel) => {
     return new Promise((resolve, reject) => {
         let query = `INSERT INTO plant_log (plant_id, illumination_level, temperature_level, moisture_level) VALUES
-        ('${plantId}', ${illuminationLevel}, ${temperatureLevel}, ${moistureLevel});`;
+        ( (SELECT id FROM plant WHERE device_id = '${deviceId}', ${illuminationLevel}, ${temperatureLevel}, ${moistureLevel});`;
         pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
@@ -143,7 +146,7 @@ exports.saveLog = (plantId, illuminationLevel, temperatureLevel, moistureLevel) 
 
 exports.getPlantsOfUser = (username) => {
     return new Promise((resolve, reject) => {
-        let query = `SELECT * FROM plant WHERE owner_email like '${username}';`;
+        let query = `SELECT * FROM plant WHERE owner_email = '${username}';`;
         pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
@@ -159,7 +162,7 @@ getEmailOfKakaotalkUser = (kakaotalkId) => {
     return new Promise((resolve, reject) => {
         console.log("yomski!" + kakaotalkId);
 
-        let query = `SELECT email from user WHERE kakaotalk_id = '${kakaotalkId}';`;
+        let query = `SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}';`;
         pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
