@@ -58,11 +58,19 @@ router.get('/:userEmail', function (req, res) {
 
 // testing purposes
 
-router.post('/plant-selection', function (req, res) {
+router.post('/plants/selection', function (req, res) {
     let nickname = req.body.nickname;
     let email = req.body.email;
     console.log(email);
     databaseService.selectPlant(nickname, email)
+    .then((result)=> res.json(result))
+    .catch((error) => res.json(error))
+})
+
+router.get('/plants/selection/:userEmail', function (req, res) {
+    let email = req.params.userEmail;
+    console.log(email);
+    databaseService.getSelectedPlantOfUser(email)
     .then((result)=> res.json(result))
     .catch((error) => res.json(error))
 })

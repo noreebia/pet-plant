@@ -208,8 +208,15 @@ exports.selectPlant = async (plantNickname, email) => {
     }
 }
 
-exports.getNicknameOfSelectedPlant = () => {
+exports.getSelectedPlantOfUser = (userEmail) => {
     return new Promise((resolve, reject)=>{
-
+        let query = `SELECT nickname, species FROM plant WHERE owner_email = '${userEmail}' AND selected = 1;`;
+        pool.query(query, (err, rows) => {
+            if (err) {
+                console.log(err);
+                reject(new DTO(false, err));
+            }
+            resolve(new DTO(true, rows));
+        })
     })
 }
