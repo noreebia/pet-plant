@@ -52,27 +52,26 @@ test_generator = test_datagen.flow_from_directory(
 
 # 2. 모델 구성하기
 model = Sequential()
+
+# Input Layer
 model.add(Conv2D(32, kernel_size=(3, 3),
                  activation='relu',
                  input_shape=(col_size,row_size,3)))
 model.add(MaxPooling2D(pool_size=(2, 2)))
-#model.add(Dropout(0.25))
-#model.add(Conv2D(64, (3, 3), activation='relu'))
+
+# Hidden Layer
 model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
-#model.add(Dropout(0.25))
 model.add(Conv2D(128, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+
+# Output Layer
 model.add(Flatten())
 model.add(Dense(256, activation='relu'))
-#model.add(Dropout(0.5))
 model.add(Dense(output, activation='softmax'))
 
 # 3. 모델 학습과정 설정하기
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-
-from keras.callbacks import EarlyStopping
-early_stopping = EarlyStopping(monitor="val_loss", mode="auto", patience = 3) 
 
 from keras.callbacks import LearningRateScheduler, ModelCheckpoint
 mc = ModelCheckpoint('weights.best.keras', monitor='val_acc', save_best_only=True)
@@ -100,6 +99,7 @@ np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 print(test_generator.class_indices)
 print(output)
 
+# 학습된 모델 저장
 model.save('petplant_image.h5')
 
 """
