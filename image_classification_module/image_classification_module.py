@@ -37,7 +37,7 @@ model = load_model('petplant_image.h5')
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 test_generator = test_datagen.flow_from_directory(
-        'C://Project/my-pet-plant/image_classification_module/data/test',
+        './data/test',
         target_size=(col_size, row_size),    
         batch_size=16,
         class_mode=None,

@@ -37,7 +37,7 @@ train_datagen = ImageDataGenerator(rescale=1./255,
                                    fill_mode='nearest')
 
 train_generator = train_datagen.flow_from_directory(
-        'C://Project/my-pet-plant/image_classification_module/data/train',
+        './data/train',
         target_size=(col_size, row_size),
         batch_size=32,
         class_mode='categorical')
@@ -45,7 +45,7 @@ train_generator = train_datagen.flow_from_directory(
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 test_generator = test_datagen.flow_from_directory(
-        'C://Project/my-pet-plant/image_classification_module/data/validation',
+        './data/validation',
         target_size=(col_size, row_size),    
         batch_size=32,
         class_mode='categorical')
