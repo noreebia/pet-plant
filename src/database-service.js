@@ -4,7 +4,7 @@ const mysql = require('mysql');
 
 
 exports.getAllUsers = function (callback) {
-    pool.query('SELECT * FROM user', (err, rows) => {
+    db.pool.query('SELECT * FROM user', (err, rows) => {
         if (err) throw err;
         callback(rows);
     });
@@ -13,7 +13,7 @@ exports.getAllUsers = function (callback) {
 exports.getUserByEmail = function (userEmail) {
     return new Promise((resolve, reject) => {
         let query = "SELECT * FROM user WHERE email = \"" + userEmail + "\"";
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 reject(new DTO(false, err));
             }
@@ -36,7 +36,7 @@ exports.createUser = async function (email, password) {
 saveUser = function (email, password) {
     return new Promise((resolve, reject) => {
         let query = "INSERT INTO user (id, email, password) VALUES (default , \'" + email + "\',\'" + password + "\')";
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 reject(new DTO(false, err));
             }
@@ -48,7 +48,7 @@ saveUser = function (email, password) {
 isExistingEmail = function (username) {
     return new Promise((resolve, reject) => {
         let query = `SELECT EXISTS(SELECT * FROM user WHERE email = '${username}');`;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 reject(new DTO(false, err));
             }
@@ -61,7 +61,7 @@ isExistingEmail = function (username) {
 exports.isValidCredentials = function (email, password) {
     return new Promise((resolve, reject) => {
         let query = `SELECT EXISTS(SELECT * FROM user WHERE email = '${email}' AND password = '${password}');`;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 reject(new DTO(false, err));
             }
@@ -76,7 +76,7 @@ exports.registerKakaotalkId = function (email, kakaotalkId) {
     return new Promise((resolve, reject) => {
         let query = `UPDATE user SET kakaotalk_id = '${kakaotalkId}' WHERE email = '${email}';`;
         console.log(query);
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 reject(new DTO(false, err));
             }
@@ -89,7 +89,7 @@ exports.registerKakaotalkId = function (email, kakaotalkId) {
 exports.isRegisteredId = function (kakaotalkId) {
     return new Promise((resolve, reject) => {
         let query = `SELECT count(*) FROM user WHERE email =  (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}' ) AND kakaotalk_id IS NULL;`;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 reject(new DTO(false, err));
             }
@@ -106,7 +106,7 @@ exports.getPlantsOfKakaotalkUser = function (kakaotalkId) {
         // let query = `SELECT nickname FROM plant WHERE owner_email = (SELECT email FROM user WHERE kakaotalk_id LIKE '${kakaotalkId}');`;
 
         let query = `SELECT nickname FROM plant WHERE owner_email = (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}');`;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 reject(new DTO(false, err));
             }
@@ -120,7 +120,7 @@ exports.registerPlant = (deviceId, userEmail, species, nickname) => {
     return new Promise((resolve, reject) => {
         let query = `INSERT INTO plant (id, device_id, owner_email, species, nickname)  
         VALUES ( default, '${deviceId}', '${userEmail}', '${species}', '${nickname}'); `;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
                 reject(new DTO(false, err));
@@ -134,7 +134,7 @@ exports.saveLog = (deviceId, illuminationLevel, temperatureLevel, moistureLevel)
     return new Promise((resolve, reject) => {
         let query = `INSERT INTO plant_log (plant_id, illumination_level, temperature_level, moisture_level) VALUES
         ( (SELECT id FROM plant WHERE device_id = '${deviceId}'), ${illuminationLevel}, ${temperatureLevel}, ${moistureLevel});`;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
                 reject(new DTO(false, err));
@@ -147,7 +147,7 @@ exports.saveLog = (deviceId, illuminationLevel, temperatureLevel, moistureLevel)
 exports.getPlantsOfUser = (username) => {
     return new Promise((resolve, reject) => {
         let query = `SELECT * FROM plant WHERE owner_email = '${username}';`;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
                 reject(new DTO(false, err));
@@ -163,7 +163,7 @@ getEmailOfKakaotalkUser = (kakaotalkId) => {
         console.log("yomski!" + kakaotalkId);
 
         let query = `SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}';`;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
                 reject(new DTO(false, err));
@@ -177,7 +177,7 @@ getEmailOfKakaotalkUser = (kakaotalkId) => {
 refreshPlantSelectionOf = (email, plantNickname) => {
     return new Promise((resolve, reject) => {
         let query = `UPDATE plant SET selected = 0 WHERE owner_email = '${email}'`;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
                 reject(new DTO(false, err));
@@ -190,7 +190,7 @@ refreshPlantSelectionOf = (email, plantNickname) => {
 setSelectedPlant = (email, plantNickname) => {
     return new Promise((resolve, reject) => {
         let query = `UPDATE plant SET selected = 1 WHERE owner_email = '${email}' AND nickname = '${plantNickname}'`;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
                 reject(new DTO(false, err));
@@ -214,7 +214,7 @@ exports.selectPlant = async (plantNickname, email) => {
 exports.getSelectedPlantOfUser = (userEmail) => {
     return new Promise((resolve, reject)=>{
         let query = `SELECT nickname, species FROM plant WHERE owner_email = '${userEmail}' AND selected = 1;`;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
                 reject(new DTO(false, err));
@@ -227,7 +227,7 @@ exports.getSelectedPlantOfUser = (userEmail) => {
 exports.getMostRecentLogOfSelectedPlant = (userEmail) => {
     return new Promise((resolve, reject)=>{
         let query = `SELECT * FROM plant_log WHERE plant_id = (SELECT id FROM plant WHERE owner_email = '${userEmail}' AND SELECTED = 1) ORDER BY recorded_date DESC LIMIT 1;`;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
                 reject(new DTO(false, err));
@@ -240,7 +240,7 @@ exports.getMostRecentLogOfSelectedPlant = (userEmail) => {
 exports.getMostRecentLogOfSelectedPlantWithKakaoId = (kakaotalk_id) => {
     return new Promise((resolve, reject)=>{
         let query = `SELECT * FROM plant_log WHERE plant_id = (SELECT id FROM plant WHERE owner_email = (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalk_id}') AND SELECTED = 1) ORDER BY recorded_date DESC LIMIT 1;`;
-        pool.query(query, (err, rows) => {
+        db.pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
                 reject(new DTO(false, err));
