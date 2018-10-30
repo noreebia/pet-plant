@@ -9,13 +9,18 @@ var storage = multer.diskStorage({
     destination: async function (req, file, callback) {
         console.log("file: " + JSON.stringify(file));
 
+        // Make isolated directory
         let dir = './image_classification_module/data/test/'+ file.originalname;
 
         if (!(await fs.existsSync(dir))){
             await fs.mkdirSync(dir);
         }
+        let dir2 = './image_classification_module/data/test/'+ file.originalname + '/upload';
 
-        callback(null, dir);
+        if (!fs.existsSync(dir2)){
+            await fs.mkdirSync(dir2);
+        }
+        callback(null, dir2);
     },
     filename: function (req, file, callback) {
         callback(null, file.originalname);
@@ -34,33 +39,32 @@ router.post('/',function(req,res){
         console.log(req.file);
         
         fileName = req.file.filename;
-    
-        res.end("File is uploaded");
+
+        // This is options and parameters to use with python script
         var options = {
             mode: 'text',
-            pythonPath: '',
-            pythonOptions: ['-u'],
-            scriptPath: '',
-            args: [fileName]
+            pythonPath: '', // We don't have to write it, because of windows PATH variable
+            pythonOptions: ['-u'],  // Python script option
+            scriptPath: '', // We don't have to write it, because of windows PATH variable
+            args: [fileName]    // parameters - We use only one parameter which represent image file name
         };
+        
+        // Make absolutepath
         let reqPath = path.join(__dirname, '../../image_classification_module');
         console.log("dirname:" + reqPath);
+
+        // Call python image classification module with file name
         pythonShell.PythonShell.run(reqPath +'/image_classification_module.py', options, function (err, results){
             if (err) {
                 console.log("Error running python script: " + err);
                 throw err;
             }
-            // fs.rmdir('../../image_classification_module/data/test/'+ fileName +'/upload', function(err){
-            //     if (err) {
-            //         return console.error(err);
-            //     }
-            // });
-            // fs.rmdir('../../image_classification_module/data/test/'+ fileName, function(err){
-            //     if (err) {
-            //         return console.error(err);
-            //     }
-            // });
-            console.log('results: %j', results);
+            // Image class result
+            let result = results.slice(-1)[0]
+
+            console.log('results: %j', result);
+            // Return the result
+            res.end(result);
         });
     });
 });
