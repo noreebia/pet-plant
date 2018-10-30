@@ -6,6 +6,13 @@ var express = require('express'),
 
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
+        try{
+            fs.mkdirSync('../../image_classification_module/data/test/'+ file.originalname + "/");
+            fs.mkdirSync('../../image_classification_module/data/test/'+ file.originalname +'/upload');
+        }
+        catch(e){
+            if ( e.code != 'EEXIST' ) throw e;
+        }
         callback(null, '../../image_classification_module/data/test/'+ file.originalname +'/upload');
     },
     filename: function (req, file, callback) {
@@ -17,13 +24,7 @@ var upload = multer({ storage: storage }).array('image', 2);
 
 router.post('/',function(req,res){
     fileName = req.files[0].filename;
-    try{
-        fs.mkdirSync('../../image_classification_module/data/test/'+ fileName);
-        fs.mkdirSync('../../image_classification_module/data/test/'+ fileName +'/upload');
-    }
-    catch(e){
-        if ( e.code != 'EEXIST' ) throw e;
-    }
+    
 
     upload(req,res,function(err) {
         if(err) {
