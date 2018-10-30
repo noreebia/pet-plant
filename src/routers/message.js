@@ -105,14 +105,7 @@ router.post('/', function(req, res) {
         };
     }
     else { // 
-        if(content.includes("테스트")){
-            answer = {
-                "message": {
-                    "text": "이것은 테스트입니다. 종료를 누르면 대화를 종료합니다."
-                }
-            };
-        }
-        else if(content.includes("종료")){
+        if(content.includes("종료")){
             answer = {
                 "message": {
                     "text": "나중에 또 대화해요!"
@@ -124,15 +117,24 @@ router.post('/', function(req, res) {
             };
         }
         else{
-            answer = {
-                "message": {
-                    "text": "죄송합니다. 알 수 없는 질문입니다."
-                },
-                "keyboard": {
-                    "type": "buttons",
-                    "buttons": defaultMenu
-                }
-            };
+            if(content.includes("상태")){
+                answer = {
+                    "message": {
+                        "text": "이것은 테스트입니다. 종료를 누르면 대화를 종료합니다."
+                    }
+                };
+            }
+            else{
+                answer = {
+                    "message": {
+                        "text": "죄송합니다. 알 수 없는 질문입니다."
+                    },
+                    "keyboard": {
+                        "type": "buttons",
+                        "buttons": defaultMenu
+                    }
+                };
+            }
         }    
     }
     res.send(answer);
