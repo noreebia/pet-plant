@@ -17,7 +17,7 @@ var storage = multer.diskStorage({
         }
         let dir2 = './image_classification_module/data/test/'+ file.originalname + '/upload';
 
-        if (!fs.existsSync(dir2)){
+        if (!(await fs.existsSync(dir2))){
             await fs.mkdirSync(dir2);
         }
         callback(null, dir2);
