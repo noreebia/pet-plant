@@ -17,8 +17,13 @@ var upload = multer({ storage: storage }).array('image', 2);
 
 router.post('/',function(req,res){
     fileName = req.files[0].filename;
-    fs.mkdirSync('../../image_classification_module/data/test/'+ fileName);
-    fs.mkdirSync('../../image_classification_module/data/test/'+ fileName +'/upload');
+    try{
+        fs.mkdirSync('../../image_classification_module/data/test/'+ fileName);
+        fs.mkdirSync('../../image_classification_module/data/test/'+ fileName +'/upload');
+    }
+    catch(e){
+        if ( e.code != 'EEXIST' ) throw e;
+    }
 
     upload(req,res,function(err) {
         if(err) {
@@ -36,6 +41,16 @@ router.post('/',function(req,res){
         PythonShell.run('image_classification_module.py', options, function (err, results){
             if (err) throw err;
 
+            fs.rmdir('../../image_classification_module/data/test/'+ fileName +'/upload', function(err){
+                if (err) {
+                    return console.error(err);
+                }
+            });
+            fs.rmdir('../../image_classification_module/data/test/'+ fileName, function(err){
+                if (err) {
+                    return console.error(err);
+                }
+            });
             console.log('results: %j', results);
         });
     });

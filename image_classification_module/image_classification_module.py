@@ -4,7 +4,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation
 import numpy as np
 from numpy import argmax
-import cv2
+import cv2, os
 from keras.preprocessing.image import ImageDataGenerator
 
 col_size = 56
@@ -28,6 +28,9 @@ def main(filename = ""):
     output = model.predict_generator(test_generator, steps=1)
     np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
     output = np.argmax(output,axis=-1)[0]
+
+    os.remove('./data/test/'+ filename +'/upload' + filename)
+
     if output == 0:
         print("This picture is Sansevieria")
         return "Sansevieria"
