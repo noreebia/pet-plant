@@ -7,11 +7,11 @@ var express = require('express'),
 
 var storage = multer.diskStorage({
     destination: async function (req, file, callback) {
-        console.log("file: " + file);
+        console.log("file: " + JSON.stringify(file));
 
         let dir = './image_classification_module/data/test/'+ file.originalname;
 
-        if (!fs.existsSync(dir)){
+        if (!(await fs.existsSync(dir))){
             await fs.mkdirSync(dir);
         }
 
@@ -22,7 +22,7 @@ var storage = multer.diskStorage({
     }
 });
 
-var upload = multer({ storage: storage }).single('image', 2);
+var upload = multer({ storage: storage }).single('image');
 
 router.post('/',function(req,res){
 
@@ -32,6 +32,7 @@ router.post('/',function(req,res){
             return res.end("Error uploading file.");
         }
         console.log(req.file);
+        
         fileName = req.file.filename;
     
         res.end("File is uploaded");
