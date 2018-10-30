@@ -6,7 +6,7 @@ var express = require('express'),
 
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
-        callback(null, './images/'+ str(file.originalname) +'/upload');
+        callback(null, './images/upload');
     },
     filename: function (req, file, callback) {
         callback(null, file.originalname);
@@ -21,14 +21,15 @@ router.post('/',function(req,res){
             console.log(err);
             return res.end("Error uploading file.");
         }
-        console.log(req)
+        console.log(req.files[0].filename)
+        fileName = req.files[0].filename;
         res.end("File is uploaded");
         var options = {
             mode: 'text',
             pythonPath: '',
             pythonOptions: ['-u'],
             scriptPath: '',
-            args: [str()]
+            args: [fileName]
         };
         PythonShell.run('image_classification_module.py', options, function (err, results){
             if (err) throw err;
