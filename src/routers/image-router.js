@@ -16,16 +16,15 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage }).array('image', 2);
 
 router.post('/',function(req,res){
-    fs.mkdirSync('../../image_classification_module/data/test/'+ file.originalname);
-    fs.mkdirSync('../../image_classification_module/data/test/'+ file.originalname +'/upload');
+    fileName = req.files[0].filename;
+    fs.mkdirSync('../../image_classification_module/data/test/'+ fileName);
+    fs.mkdirSync('../../image_classification_module/data/test/'+ fileName +'/upload');
 
     upload(req,res,function(err) {
         if(err) {
             console.log(err);
             return res.end("Error uploading file.");
         }
-        console.log(req.files[0].filename)
-        fileName = req.files[0].filename;
         res.end("File is uploaded");
         var options = {
             mode: 'text',

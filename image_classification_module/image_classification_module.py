@@ -13,8 +13,6 @@ row_size = 56
 from keras.models import load_model
 model = load_model('petplant_image.h5')
 
-
-
 def main(filename = ""):
     test_datagen = ImageDataGenerator(rescale=1./255)
 
