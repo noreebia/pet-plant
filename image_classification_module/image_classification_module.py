@@ -19,7 +19,7 @@ def main(filename = ""):
     test_datagen = ImageDataGenerator(rescale=1./255)
 
     test_generator = test_datagen.flow_from_directory(
-            './images/'+ filename +'/upload',
+            './data/test/'+ filename +'/upload',
             target_size=(col_size, row_size),    
             batch_size=16,
             class_mode=None,

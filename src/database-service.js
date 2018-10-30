@@ -237,3 +237,16 @@ exports.getMostRecentLogOfSelectedPlant = (userEmail) => {
     })
 }
 
+exports.getMostRecentLogOfSelectedPlantWithKakaoId = (kakaotalk_id) => {
+    return new Promise((resolve, reject)=>{
+        let query = `SELECT * FROM plant_log WHERE plant_id = (SELECT id FROM plant WHERE owner_email = (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalk_id}') AND SELECTED = 1) ORDER BY recorded_date DESC LIMIT 1;`;
+        pool.query(query, (err, rows) => {
+            if (err) {
+                console.log(err);
+                reject(new DTO(false, err));
+            }
+            resolve(new DTO(true, rows));
+        })
+    })
+}
+

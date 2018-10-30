@@ -6,7 +6,7 @@ var express = require('express'),
 
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
-        callback(null, './images/upload');
+        callback(null, '../../image_classification_module/data/test/'+ file.originalname +'/upload');
     },
     filename: function (req, file, callback) {
         callback(null, file.originalname);
@@ -16,6 +16,9 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage }).array('image', 2);
 
 router.post('/',function(req,res){
+    fs.mkdirSync('../../image_classification_module/data/test/'+ file.originalname);
+    fs.mkdirSync('../../image_classification_module/data/test/'+ file.originalname +'/upload');
+
     upload(req,res,function(err) {
         if(err) {
             console.log(err);
