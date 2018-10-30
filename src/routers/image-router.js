@@ -1,8 +1,9 @@
 var express = require('express'),
     router = express.Router(),
     multer = require('multer'),
-    PythonShell = require('python-shell'),
-    fs = require('fs');
+    pythonShell = require('python-shell'),
+    fs = require('fs'),
+    path = require('path');
 
 var storage = multer.diskStorage({
     destination: async function (req, file, callback) {
@@ -110,7 +111,9 @@ router.post('/',function(req,res){
             scriptPath: '',
             args: [fileName]
         };
-        PythonShell.run('image_classification_module.py', options, function (err, results){
+        let reqPath = path.join(__dirname, '../../image_classification_module');
+        console.log("dirname:" + reqPath);
+        pythonShell.PythonShell.run(reqPath +'/image_classification_module.py', options, function (err, results){
             if (err) throw err;
             // fs.rmdir('../../image_classification_module/data/test/'+ fileName +'/upload', function(err){
             //     if (err) {
