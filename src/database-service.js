@@ -263,3 +263,50 @@ exports.getMostRecentLogOfSelectedPlantWithKakaoId = (kakaotalk_id) => {
     })
 }
 
+// exports.kakaotalkIdExistsInDatabase = async (userEmail) => {
+//     return new Promise((resolve, reject)=>{
+
+//         let query = `SELECT kakaotalk_id FROM user WHERE email = '${userEmail}'`;
+ 
+//         db.pool.query(query, (err, rows) => {
+//             if (err) {
+//                 console.log(err);
+//                 reject(new DTO(false, err));
+//             }
+//             console.log(rows);
+//             console.log(rows[0].kakaotalk_id);
+//             let exists = true;
+//             if(rows[0].kakaotalk_id == null){
+//                 exists = false;
+//             } 
+//             console.log("exists:" + exists);
+//             resolve(exists);
+//         })
+//     })
+// }
+
+// exports.isExistingKakaotalkKey = function (kakaotalkId) {
+//     return new Promise((resolve, reject) => {
+//         let query = `SELECT EXISTS(SELECT * FROM user WHERE kakaotalk_id = '${kakaotalkId}');`;
+//         db.pool.query(query, (err, rows) => {
+//             if (err) {
+//                 reject(new DTO(false, err));
+//             }
+//             let result = rows[0];
+//             resolve(result[Object.keys(result)[0]]);
+//         })
+//     })
+// }
+
+exports.kakaotalkKeyExistsInDatabase = function (kakaotalkId) {
+    return new Promise((resolve, reject) => {
+        let query = `SELECT EXISTS(SELECT * FROM user WHERE kakaotalk_id = '${kakaotalkId}');`;
+        db.pool.query(query, (err, rows) => {
+            if (err) {
+                reject(new DTO(false, err));
+            }
+            let result = rows[0];
+            resolve(result[Object.keys(result)[0]]);
+        })
+    })
+}

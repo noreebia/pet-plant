@@ -83,4 +83,11 @@ router.get('/plants/logs/:userEmail', (req, res)=>{
     .catch((error) => res.json(error))  
 })
 
+router.post('/registration', (req, res)=>{
+    let kakaotalkId = req.body.kakaotalkId;
+    databaseService.kakaotalkKeyExistsInDatabase(kakaotalkId)
+    .then((exists)=>console.log(exists))
+    .catch((error)=> res.json(error));
+})
+
 module.exports = router;
