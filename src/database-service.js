@@ -58,6 +58,19 @@ isExistingEmail = function (username) {
     })
 }
 
+exports.isExistingEmail = function (username) {
+    return new Promise((resolve, reject) => {
+        let query = `SELECT EXISTS(SELECT * FROM user WHERE email = '${username}');`;
+        db.pool.query(query, (err, rows) => {
+            if (err) {
+                reject(new DTO(false, err));
+            }
+            let result = rows[0];
+            resolve(result[Object.keys(result)[0]]);
+        })
+    })
+}
+
 exports.isValidCredentials = function (email, password) {
     return new Promise((resolve, reject) => {
         let query = `SELECT EXISTS(SELECT * FROM user WHERE email = '${email}' AND password = '${password}');`;
