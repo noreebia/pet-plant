@@ -100,10 +100,14 @@ router.post('/', async function(req, res) {
                 let response;
 
                 try{
-                    let plantName = await getSelectedPlantOfKakaotalkUser(user_key);
-                    let latestLogOfUser = await databaseService.getMostRecentLogOfSelectedPlantWithKakaoId(user_key).details;
-                    let currentStatus = `온도는 ${latestLogOfUser.temperatue_level}이며, 습도는 ${latestLogOfUser.moisture_level}이고 조도는 ${illumination_level}입니다!`;
-                    response = `${plantName}의 ${currentStatus}`;
+                    let plantName = await databaseService.getSelectedPlantOfKakaotalkUser(user_key);
+                    console.log(plantName.details);
+                    let log = await databaseService.getMostRecentLogOfSelectedPlantWithKakaoId(user_key);
+                    console.log(log);
+                    let measurements = log.details[0];
+                    console.log(measurements);
+                    let currentStatus = `온도는 ${measurements.temperature_level}이며, 습도는 ${measurements.moisture_level}이고 조도는 ${measurements.illumination_level}입니다!`;
+                    response = `'${plantName.details[0].nickname}'의 ${currentStatus}`;
                 } catch(err){
                     console.log(err);
                     response = "서버 오류가 발생했습니다."

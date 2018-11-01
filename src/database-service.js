@@ -226,7 +226,7 @@ exports.getSelectedPlantOfUser = (userEmail) => {
 
 exports.getSelectedPlantOfKakaotalkUser = (kakaotalkId) => {
     return new Promise((resolve, reject)=>{
-        let query = `SELECT nickname, species FROM plant WHERE owner_email = (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}') AND selected = 1;`;
+        let query = `SELECT nickname FROM plant WHERE owner_email = (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}') AND selected = 1;`;
         db.pool.query(query, (err, rows) => {
             if (err) {
                 console.log(err);
