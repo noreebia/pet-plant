@@ -1,14 +1,19 @@
 var express = require('express');
 var router = express.Router();
+var databaseService = require('../database-service');
 
 router.use(async function (req, res, next) {
+    console.log("inside middleware");
+
     console.log(req.body.user_key);
     let userKey = decodeURIComponent(req.body.user_key); // user's key
     let type = decodeURIComponent(req.body.type); // message type
     let content = decodeURIComponent(req.body.content); // user's message
+    console.log("inside middleware");
+
     
     let isExistingKakaotalkKey = await databaseService.kakaotalkKeyExistsInDatabase(userKey);
-    console.log(isExistingKakaotalkKey);
+    console.log("is existing key:" + isExistingKakaotalkKey);
     if(!isExistingKakaotalkKey){
         const answer = {
             // 카카오톡 user_id가 등록되지 않은경우
