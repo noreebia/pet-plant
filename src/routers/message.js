@@ -3,12 +3,12 @@ var router = express.Router();
 var databaseService = require('../database-service');
 
 router.post('/', async function (req, res) {
-    let user_key = decodeURIComponent(req.body.user_key); // user's key
+    let userKey = decodeURIComponent(req.body.user_key); // user's key
     let type = decodeURIComponent(req.body.type); // message type
     let content = decodeURIComponent(req.body.content); // user's message
     let answer;
 
-    console.log(user_key);
+    console.log(userKey);
     console.log(type);
     console.log(content);
 
@@ -25,10 +25,11 @@ router.post('/', async function (req, res) {
             }
         };
         res.send(answer);
+        return;
     }
 
     if (content.includes("대화하기")) {
-        databaseService.getPlantsOfKakaotalkUser(user_key)
+        databaseService.getPlantsOfKakaotalkUser(userKey)
             .then((result) => {
                 console.log(result)
             })
@@ -44,7 +45,7 @@ router.post('/', async function (req, res) {
         answer = {
             // 카카오톡 user_id가 등록되지 않은경우
             "message": {
-                "text": "USER ID: " + user_key + "\n등록방법!\n1. 하단 링크를 클릭해주세요.\n2. PetPlant 아이디와 상단의 유저 ID를 입력해주세요.\n 3.등록버튼을 누르시면 끝!",//+content  in case 'text'
+                "text": "USER ID: " + userKey + "\n등록방법!\n1. 하단 링크를 클릭해주세요.\n2. PetPlant 아이디와 상단의 유저 ID를 입력해주세요.\n 3.등록버튼을 누르시면 끝!",//+content  in case 'text'
                 "message_button": {
                     "label": "등록하러 가기.",
                     "url": "http://117.16.136.73:8080/users/kakaotalk-registration"
@@ -64,12 +65,12 @@ router.post('/', async function (req, res) {
         };
     }
     else if (content.includes("상태")) {
-        console.log("user key:" + user_key);
+        console.log("user key:" + userKey);
         let response;
         try {
-            let plantName = await databaseService.getSelectedPlantOfKakaotalkUser(user_key);
+            let plantName = await databaseService.getSelectedPlantOfKakaotalkUser(userKey);
             console.log(plantName.details);
-            let log = await databaseService.getMostRecentLogOfSelectedPlantWithKakaoId(user_key);
+            let log = await databaseService.getMostRecentLogOfSelectedPlantWithKakaoId(userKey);
             console.log(log);
             let measurements = log.details[0];
             console.log(measurements);
