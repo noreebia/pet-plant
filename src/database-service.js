@@ -58,7 +58,7 @@ isExistingEmail = function (username) {
     })
 }
 
-exports.isExistingEmail = function (username) {
+exports.isExistingEmailExportVersion = function (username) {
     return new Promise((resolve, reject) => {
         let query = `SELECT EXISTS(SELECT * FROM user WHERE email = '${username}');`;
         db.pool.query(query, (err, rows) => {
