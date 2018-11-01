@@ -14,7 +14,7 @@ router.post('/', async function (req, res) {
 
     let isExistingKakaotalkKey = await databaseService.kakaotalkKeyExistsInDatabase(userKey);
     console.log(isExistingKakaotalkKey);
-    if(!isExistingKakaotalkKey){
+    if (!isExistingKakaotalkKey) {
         const answer = {
             "message": {
                 "text": `Pet Plant 앱과 현재 연동이 되어있지 않습니다. 연동을 하기 위해서는 \n1.하단의 링크를 클릭.\n2.첫 번째 양식에는 Pet Plant 앱에서 등록한 email을 입력해주시고, 두 번째 양식에는 '${userKey}'를 입력\n3. 등록 버튼 클릭`,
@@ -29,38 +29,27 @@ router.post('/', async function (req, res) {
     }
 
     if (content.includes("대화하기")) {
-        databaseService.getPlantsOfKakaotalkUser(userKey)
-            .then((result) => {
-                console.log(result)
-            })
+        let plantName = await databaseService.getSelectedPlantOfKakaotalkUser(userKey).details[0].nickname;
 
+        let response = `저는 ${plantName}입니다. 무슨 일이신가요 주인님?`;
         answer = {
-            // 카카오톡 user_id가 등록되지 않은경우
             "message": {
-                "text": "안녕하세요 오랜만이에요.",
+                "text": response
             }
         };
     }
-    else if (content.includes("등록하기")) {
+    
+    else if (content.includes("잘자") || content.includes("잘 자")) {
         answer = {
-            // 카카오톡 user_id가 등록되지 않은경우
             "message": {
-                "text": "USER ID: " + userKey + "\n등록방법!\n1. 하단 링크를 클릭해주세요.\n2. PetPlant 아이디와 상단의 유저 ID를 입력해주세요.\n 3.등록버튼을 누르시면 끝!",//+content  in case 'text'
-                "message_button": {
-                    "label": "등록하러 가기.",
-                    "url": "http://117.16.136.73:8080/users/kakaotalk-registration"
-                }
+                "text": "안녕히 주무세요 주인님!"
             }
         };
     }
-    else if (content.includes("종료")) {
+    else if (content.includes("도움말")) {
         answer = {
             "message": {
-                "text": "나중에 또 대화해요!"
-            },
-            "keyboard": {
-                "type": "buttons",
-                "buttons": defaultMenu
+                "text": "Pet Plant 앱에서 email 계정으로 가입 후, 키우시는 식물의 사진을 찍어서 등록을 해주세요! 그 후 대화를 원하시는 식물을 앱에서 선택해주시면 됩니다."
             }
         };
     }
@@ -89,11 +78,7 @@ router.post('/', async function (req, res) {
     else {
         answer = {
             "message": {
-                "text": "죄송합니다. 알 수 없는 질문입니다."
-            },
-            "keyboard": {
-                "type": "buttons",
-                "buttons": defaultMenu
+                "text": "무슨 말인지 모르겠어요 주인님."
             }
         };
     }
