@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const databaseService = require('../database-service');
 let DTO = require('../dto');
+var xml2js = require('xml2js');
+var request = require('request');
 
 router.use(function (req, res, next) {
     console.log('Request for user resource arrived...');
@@ -98,6 +100,22 @@ router.get('/testtest/:username', (req, res)=>{
         res.send(exists);
     })
     .catch((error)=> res.json(error));
+})
+
+router.get('/test/nongsaro', (req, res)=>{
+    try {
+        let url = 'http://api.nongsaro.go.kr/service/garden/gardenList?apiKey=201810240OZ0QZRO82I7A3HJEUJXTQ&sType=sCntntsSj&sText=산세베리아'; 
+        let parser = new xml2js.Parser();
+    
+        request(url, function(error, response, body) {
+            parser.parseString(body, function(err,result){        
+                console.log(result);
+            });
+        });
+    }
+    catch (ex) {console.log(ex)}
+
+    res.send(result);
 })
 
 module.exports = router;
