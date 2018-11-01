@@ -1,35 +1,35 @@
 /**
-   Konkuk University CSE
-   2018 Sem 2 Graduation Project.
-   copyright 2018 PetPlant. All rights reserved.
-*/
+ * Konkuk University CSE
+ * 2018 Sem 2 Graduation Project.
+ * copyright 2018 PetPlant. All rights reserved.
+ */
 
 /**
-   ESP8266 01 Firmware code.
-   ------
-   ESP8266 WIFI Module.
-   Connection with Arduino Nano Board.
-*/
+ * ESP8266 01 Firmware code.
+ * ------
+ * ESP8266 WIFI Module.
+ * Connection with Arduino Nano Board.
+ */
 
 /**
-   ESP8266 WiFi.h : ESP Library.
-   WiFiUdp.h : UDP Module header in IDE.
-   Wire.h
-   SPI.h
-*/
+ * ESP8266 WiFi.h : ESP Library.
+ * WiFiUdp.h : UDP Module header in IDE.
+ * Wire.h
+ * SPI.h
+ */
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 #include <Wire.h>
 #include <SPI.h>
 
 /**
-   Setting the Unique Machine Serial Number.
-*/
+ * Setting the Unique Machine Serial Number.
+ */
 #define MachineSerial "KCG20130001"
 
 /**
-   Wifi SSID, Password Value.
-*/
+ * Wifi SSID, Password Value.
+ */
 const String SHOWCommand = String("AT");
 // const String SSIDCommand = String("AT+SSID");
 // const String PASSWDCommand = String("AT+PASSWD");
@@ -50,8 +50,8 @@ char incomingPacket[255];  // buffer for incoming packets
 //char*  replyPacket;  // a reply string to send back
 
 /**
-   Send data.
-*/
+ * Send data.
+ */
 String sendData = "";
 String parseData = "::";
 
@@ -87,8 +87,8 @@ void loop() {
   }
 
   /**
-     init data.
-  */
+   * init data.
+   */
   sendData = Serial.readString();
   sendData = MachineSerial + parseData + sendData;
   Serial.print("sendData : ");
@@ -100,13 +100,13 @@ void loop() {
   Serial.println(cstrSendData);
 
   /**
-     UDP Packet send test message.
-  */
+   * UDP Packet send test message.
+   */
   Serial.printf("Now listening at IP %s, UDP port %d,  SEND UDP PACKET FUNCTION.\n", WiFi.localIP().toString().c_str(), localUdpPort);
 
   /**
-     Packet send module.
-  */
+   * Packet send module.
+   */
   Udp.beginPacket(target_ip, 8080);
   Udp.write(cstrSendData);
   Udp.endPacket();
