@@ -28,8 +28,26 @@ router.post('/', async function (req, res) {
         return;
     }
 
+
+    let plantName;
+    try{
+        plantName = await databaseService.getSelectedPlantOfKakaotalkUser(userKey);
+    } catch(err){
+        res.send("서버가 발생하였습니다.");
+        return;
+    }
+    if(plantName.details.length == 0){
+        const answer = {
+            "message": {
+                "text": `현재 등록된 식물이 없습니다. 앱에서 식물을 등록해주세요!`,
+            }
+        };
+        res.send(answer);
+        return;
+    }
+
     if (content.includes("대화하기")) {
-        let plantNameQuery = await databaseService.getSelectedPlantOfKakaotalkUser(userKey)
+        let plantNameQuery = await databaseService.getSelectedPlantOfKakaotalkUser(userKey);
         let plantName = plantNameQuery.details[0].nickname;
 
         let response = `저는 '${plantName}'입니다. 무슨 일이신가요 주인님?`;
@@ -39,7 +57,7 @@ router.post('/', async function (req, res) {
             }
         };
     }
-    
+
     else if (content.includes("잘자") || content.includes("잘 자")) {
         answer = {
             "message": {

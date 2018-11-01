@@ -90,4 +90,14 @@ router.post('/registration', (req, res)=>{
     .catch((error)=> res.json(error));
 })
 
+router.get('/testtest/:username', (req, res)=>{
+    let email = req.params.username;
+    databaseService.getSelectedPlantOfKakaotalkUser(email)
+    .then((exists)=>{
+        console.log(exists);
+        res.send(exists);
+    })
+    .catch((error)=> res.json(error));
+})
+
 module.exports = router;
