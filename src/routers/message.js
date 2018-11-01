@@ -29,9 +29,10 @@ router.post('/', async function (req, res) {
     }
 
     if (content.includes("대화하기")) {
-        let plantName = await databaseService.getSelectedPlantOfKakaotalkUser(userKey).details[0].nickname;
+        let plantNameQuery = await databaseService.getSelectedPlantOfKakaotalkUser(userKey)
+        let plantName = plantNameQuery.details[0].nickname;
 
-        let response = `저는 ${plantName}입니다. 무슨 일이신가요 주인님?`;
+        let response = `저는 '${plantName}'입니다. 무슨 일이신가요 주인님?`;
         answer = {
             "message": {
                 "text": response
