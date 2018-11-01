@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var databaseService = require('../database-service');
 /* 처음 들어왔을 때 */
-router.post('/', function(req, res) {
+router.post('/', async function(req, res) {
     let user_key = decodeURIComponent(req.body.user_key); // user's key
     let type = decodeURIComponent(req.body.type); // message type
     let content = decodeURIComponent(req.body.content); // user's message
@@ -11,30 +11,7 @@ router.post('/', function(req, res) {
     console.log(user_key);
     console.log(type);
     console.log(content);
-    /*
-    if (content.includes("식물 선택하기")) {
-        let plantIds = [];
-        databaseService.getPlantsOfKakaotalkUser(user_key)
-            .then((result) => {
-                result.details.forEach(function(nickname) {
-                    plantIds.push(`${plantIds.length+1}번 식물: ${nickname}`);
-                });
-            })
-            if(plantIds.length == 0){
-                plantIds.push("등록된 기기가 없습니다. 앱에서 기기 등록을 해주세요!");
-            }
-            console.log(plantIds);
 
-        answer = {
-            "message": {
-                "text": "식물을 선택"
-            },
-            "keyboard": {
-                "type": "buttons",
-                "buttons": plantIds
-            }
-        };
-    }*/
     if (content.includes("대화하기")) {
         databaseService.getPlantsOfKakaotalkUser(user_key)
             .then((result) => {
@@ -118,9 +95,12 @@ router.post('/', function(req, res) {
         }
         else{
             if(content.includes("상태")){
+                let latestLogOfUser = await getMostRecentLogOfSelectedPlantWithKakaoId(kakaotalk_id);
+                let currentStatus = (latestLogOfUser.details).stringify();
+
                 answer = {
                     "message": {
-                        "text": "이것은 테스트입니다. 종료를 누르면 대화를 종료합니다."
+                        "text": currentStatus;
                     }
                 };
             }
