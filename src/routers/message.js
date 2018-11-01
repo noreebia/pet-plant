@@ -97,21 +97,21 @@ router.post('/', async function(req, res) {
             if(content.includes("상태")){
                 console.log("user key:" + user_key);
 
-                let latestLogOfUser;
-                let currentStatus;
+                let response;
 
                 try{
-                    latestLogOfUser = await databaseService.getMostRecentLogOfSelectedPlantWithKakaoId(user_key);
-                    console.log(latestLogOfUser.details);
-                    currentStatus = JSON.stringify(latestLogOfUser);
+                    let plantName = await getSelectedPlantOfKakaotalkUser(user_key);
+                    let latestLogOfUser = await databaseService.getMostRecentLogOfSelectedPlantWithKakaoId(user_key).details;
+                    let currentStatus = `온도는 ${latestLogOfUser.temperatue_level}이며, 습도는 ${latestLogOfUser.moisture_level}이고 조도는 ${illumination_level}입니다!`;
+                    response = `${plantName}의 ${currentStatus}`;
                 } catch(err){
                     console.log(err);
-                    currentStatus = "서버 오류가 발생했습니다."
+                    response = "서버 오류가 발생했습니다."
                 }
 
                 answer = {
                     "message": {
-                        "text": currentStatus
+                        "text": response
                     }
                 };
             }
