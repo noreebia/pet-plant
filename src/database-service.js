@@ -224,6 +224,19 @@ exports.getSelectedPlantOfUser = (userEmail) => {
     })
 }
 
+exports.getSelectedPlantOfKakaotalkUser = (kakaotalkId) => {
+    return new Promise((resolve, reject)=>{
+        let query = `SELECT nickname, species FROM plant WHERE owner_email = (SELECT email FROM user WHERE kakaotalk_id = '${kakaotalkId}') AND selected = 1;`;
+        db.pool.query(query, (err, rows) => {
+            if (err) {
+                console.log(err);
+                reject(new DTO(false, err));
+            }
+            resolve(new DTO(true, rows));
+        })
+    })
+}
+
 exports.getMostRecentLogOfSelectedPlant = (userEmail) => {
     return new Promise((resolve, reject)=>{
         let query = `SELECT * FROM plant_log WHERE plant_id = (SELECT id FROM plant WHERE owner_email = '${userEmail}' AND SELECTED = 1) ORDER BY recorded_date DESC LIMIT 1;`;

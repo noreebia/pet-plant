@@ -95,12 +95,23 @@ router.post('/', async function(req, res) {
         }
         else{
             if(content.includes("상태")){
-                let latestLogOfUser = await getMostRecentLogOfSelectedPlantWithKakaoId(kakaotalk_id);
-                let currentStatus = (latestLogOfUser.details).stringify();
+                console.log("user key:" + user_key);
+
+                let latestLogOfUser;
+                let currentStatus;
+
+                try{
+                    latestLogOfUser = await databaseService.getMostRecentLogOfSelectedPlantWithKakaoId(user_key);
+                    console.log(latestLogOfUser.details);
+                    currentStatus = JSON.stringify(latestLogOfUser);
+                } catch(err){
+                    console.log(err);
+                    currentStatus = "서버 오류가 발생했습니다."
+                }
 
                 answer = {
                     "message": {
-                        "text": currentStatus;
+                        "text": currentStatus
                     }
                 };
             }
