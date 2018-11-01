@@ -33,10 +33,10 @@ def main(filename = "", model = None):
 
     if output == 0:
         print("This picture is Sansevieria")
-        return "산세베리아"
+        return "snake&nbspplant"
     else:
         print("This picture is spartyfilm")
-        return "스파티필름"
+        return "spath"
 
 if __name__ == "__main__":
     import sys

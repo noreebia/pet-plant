@@ -2,8 +2,10 @@ var express = require('express');
 var router = express.Router();
 const databaseService = require('../database-service');
 let DTO = require('../dto');
-var xml2js = require('xml2js');
-var request = require('request');
+let http = require('http');
+let parser = require('fast-xml-parser');
+let he = require('he');
+let axios = require('axios');
 
 router.use(function (req, res, next) {
     console.log('Request for user resource arrived...');
@@ -102,20 +104,85 @@ router.get('/testtest/:username', (req, res)=>{
     .catch((error)=> res.json(error));
 })
 
-router.get('/test/nongsaro', (req, res)=>{
-    try {
-        let url = 'http://api.nongsaro.go.kr/service/garden/gardenList?apiKey=201810240OZ0QZRO82I7A3HJEUJXTQ&sType=sCntntsSj&sText=산세베리아'; 
-        let parser = new xml2js.Parser();
-    
-        request(url, function(error, response, body) {
-            parser.parseString(body, function(err,result){        
-                console.log(result);
-            });
-        });
-    }
-    catch (ex) {console.log(ex)}
+router.get('/public/nongsaro', async (req, res)=>{
+    let plantName = req.query.species;
+    console.log(plantName);
+    let contentNo = '';
+    var options = {
+        attributeNamePrefix : "@_",
+        attrNodeName: "attr", //default is 'false'
+        textNodeName : "#text",
+        ignoreAttributes : true,
+        ignoreNameSpace : false,
+        allowBooleanAttributes : false,
+        parseNodeValue : true,
+        parseAttributeValue : false,
+        trimValues: false,
+        cdataTagName: false, //default is 'false'
+        cdataPositionChar: "!",
+        localeRange: "", //To support non english character in tag/attribute values.
+        parseTrueNumberOnly: false,
+        attrValueProcessor: a => he.decode(a, {isAttributeValue: true}),//default is a=>a
+        tagValueProcessor : a => he.decode(a) //default is a=>a
+    };
 
-    res.send(result);
+    await axios.get('http://api.nongsaro.go.kr/service/garden/gardenList?apiKey=201810240OZ0QZRO82I7A3HJEUJXTQ&sType=sPlntzrNm&sText=' + plantName)
+    .then(response => {
+        var body = response.data;
+        
+        if( parser.validate(body) === true) { //optional (it'll return an object in case it's not valid)
+            var jsonObj = parser.parse(body,options);
+        }
+        
+        // Intermediate obj
+        var tObj = parser.getTraversalObj(body,options);
+        var jsonObj = parser.convertToJson(tObj,options);
+        contentNo += jsonObj["response"]["body"]["items"]["item"][0]["cntntsNo"];
+        console.log(contentNo); 
+    })
+    .catch(error => {
+        console.log(error);
+    })
+
+    await axios.get('http://api.nongsaro.go.kr/service/garden/gardenDtl?apiKey=201810240OZ0QZRO82I7A3HJEUJXTQ&sType=sCntntsSj&wordType=cntntsSj&cntntsNo=' + contentNo)
+    .then(response => {
+        var body = response.data;
+        
+        if( parser.validate(body) === true) { //optional (it'll return an object in case it's not valid)
+            var jsonObj = parser.parse(body,options);
+        }
+        
+        // parsing obj
+        var tObj = parser.getTraversalObj(body,options);
+        var jsonObj = parser.convertToJson(tObj,options);
+        let temp = jsonObj["response"]["body"]["item"]["grwhTpCodeNm"];
+        let humid = jsonObj["response"]["body"]["item"]["hdCodeNm"];
+        let light = jsonObj["response"]["body"]["item"]["lighttdemanddoCodeNm"];
+
+        // Make JSON format
+
+        temp = temp.split('~');
+        temp = '{"min":' + temp[0] + ', "max":' + temp[1].split("℃")[0] + "}"
+
+        humid = humid.split(' ~ ');
+        humid = '{"min":' + humid[0] + ', "max":' + humid[1].split("%")[0] + "}"
+
+        light = light.split("),")
+        let tmp = [];
+        for(let i = 0; i<light.length; i++){
+            tmp.push(light[i].split("(")[1].split(" Lux")[0]);
+        }
+        light = '{"types":[';
+        for(let i = 0; i<tmp.length - 1; i++){
+            light += '{"min":' + tmp[i].split("~")[0].replace(',', '') + ', "max":' + tmp[i].split("~")[1].replace(',', '') + "}, ";
+        }
+        light += '{"min":' + tmp.slice(-1)[0].split("~")[0].replace(',', '') + ', "max":' + tmp.slice(-1)[0].split("~")[1].replace(',', '') + "}]}";
+
+        res.send("'[" + temp + ", " + humid + ", " + light + "]'");  
+    })
+    .catch(error => {
+        console.log(error);
+    })
 })
 
 module.exports = router;

@@ -64,6 +64,7 @@ router.post('/',function(req,res){
 
             console.log('results: %j', result);
             // Return the result
+            res.writeHead(200, {'Content-Type':'text/plain; charset=utf-8'});
             res.end(result);
         });
     });
