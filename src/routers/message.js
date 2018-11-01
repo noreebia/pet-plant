@@ -33,7 +33,7 @@ router.post('/', async function (req, res) {
     try{
         plantName = await databaseService.getSelectedPlantOfKakaotalkUser(userKey);
     } catch(err){
-        res.send("서버가 발생하였습니다.");
+        res.send("서버 오류가 발생하였습니다.");
         return;
     }
     if(plantName.details.length == 0){
