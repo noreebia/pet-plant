@@ -33,7 +33,7 @@ def main(filename = "", model = None):
 
     if output == 0:
         print("This picture is Sansevieria")
-        return "snake&nbspplant"
+        return "snake plant"
     else:
         print("This picture is spartyfilm")
         return "spath"
