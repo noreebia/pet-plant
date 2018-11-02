@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var databaseService = require('../database-service');
+var nongsaro = require('../nongsaro');
 
 router.post('/', async function (req, res) {
     let userKey = decodeURIComponent(req.body.user_key); // user's key
@@ -35,7 +36,7 @@ router.post('/', async function (req, res) {
     if (!isExistingKakaotalkKey) {
         const answer = {
             "message": {
-                "text": `Pet Plant 앱과 현재 연동이 되어있지 않습니다. 연동을 하기 위해서 Pet Plant 앱에서 등록한 아이디를 이 방에 보내주세요.\n예시: mail@domain.com`,
+                "text": `Pet Plant 앱과 현재 연동이 되어있지 않습니다. 연동을 하기 위해서 Pet Plant 앱에서 등록한 아이디를 이 방에서 말해주세요.\n예시: mail@domain.com`,
             }
         };
         res.send(answer);
@@ -90,13 +91,21 @@ router.post('/', async function (req, res) {
         let response;
         try {
             let log = await databaseService.getMostRecentLogOfSelectedPlantWithKakaoId(userKey);
+            console.log(log);
             if(log.details.length == 0){
                 response = "제가 아직 측정을 시작하지 못해서 측정값이 없습니다.";    
             } else{
+                let plantId = log.details[0].plant_id;
+                let species = await databaseService.getSpeciesOfPlantWithId(plantId);
+                species = species.replace(/\s/g, "&nbsp");
+
+                let plantInfo = await nongsaro.getPlantData(species);
+
+
                 console.log(log);
                 let measurements = log.details[0];
                 console.log(measurements);
-                let currentStatus = `온도는 ${measurements.temperature_level}이며, 습도는 ${measurements.moisture_level}이고 조도는 ${measurements.illumination_level}입니다!`;
+                let currentStatus = `온도는 ${measurements.temperature_level}%이며, 습도는 ${measurements.moisture_level}%이고 조도는 ${measurements.illumination_level}%입니다!`;
                 response = `'${plantName}'의 ${currentStatus}`;
             }
         } catch (err) {

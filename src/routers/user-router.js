@@ -28,21 +28,13 @@ router.post('/', function (req, res) {
 })
 
 router.post('/register_kakao', function (req, res) {
-    let email = req.body.petplantID;
-    let kakao = req.body.kakaoID;
-
-    databaseService.registerKakaotalkId(email, kakao)
+    databaseService.registerKakaotalkId(req.body.petplantID, req.body.kakaoID)
         .then(() => res.render('success'))
         .catch((error) => res.json(error));
 })
 
 router.post('/plants', function (req, res) {
-    let deviceId = req.body.plantId;
-    let userEmail = req.body.userEmail;
-    let species = req.body.species;
-    let nickname = req.body.nickname;
-
-    databaseService.registerPlant(deviceId, userEmail, species, nickname)
+    databaseService.registerPlant(req.body.plantId, req.body.userEmail, req.body.species, req.body.nickname)
         .then((result) => res.json(result))
         .catch((error) => res.json(error))
 })
@@ -60,28 +52,37 @@ router.get('/:userEmail', function (req, res) {
 // testing purposes
 
 router.post('/plants/selection', function (req, res) {
-    let nickname = req.body.nickname;
-    let email = req.body.email;
-    console.log(email);
-    databaseService.selectPlant(nickname, email)
+    databaseService.selectPlant(req.body.nickname, req.body.email)
         .then((result) => res.json(result))
         .catch((error) => res.json(error))
 })
 
 router.get('/plants/selection/:userEmail', function (req, res) {
-    let email = req.params.userEmail;
     console.log(email);
-    databaseService.getSelectedPlantOfUser(email)
+    databaseService.getSelectedPlantOfUser(req.params.userEmail)
         .then((result) => res.json(result))
         .catch((error) => res.json(error))
 })
 
-router.get('/plants/logs/:userEmail', (req, res) => {
-    let email = req.params.userEmail;
-    console.log(email);
-    databaseService.getMostRecentLogOfSelectedPlant(email)
-        .then((result) => res.json(result))
-        .catch((error) => res.json(error))
+// router.get('/plants/logs/:userEmail', (req, res) => {
+//     let email = req.params.userEmail;
+//     console.log(email);
+//     databaseService.getMostRecentLogOfSelectedPlant(email)
+//         .then((result) => res.json(result))
+//         .catch((error) => res.json(error))
+// })
+
+router.get('/plants/logs/:userEmail', async (req, res) => {
+    let response = await databaseService.getMostRecentLogOfSelectedPlantWithKakaoId(req.params.userEmail);
+    console.log(response);
+    let log = response.details[0].plant_id;
+    console.log(log);
+})
+
+router.get('/plants/logs/test/:id', async (req, res) => {
+    let response = await databaseService.getSpeciesOfPlantWithId(req.params.id);
+    console.log(response);
+    res.send(response);
 })
 
 router.post('/registration', (req, res) => {
@@ -108,7 +109,7 @@ router.post('/testtesttest', function (req, res) {
         .catch((error) => res.json(error))
 })
 
-router.get('/public/nongsaro/:plantName', (req, res) => {
+router.get('/nongsaro-data/:plantName', (req, res) => {
     nongsaro.getPlantData(req.params.plantName)
     .then(result => res.json(result))
     .catch((error) => res.json(error))

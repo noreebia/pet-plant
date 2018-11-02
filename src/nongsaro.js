@@ -80,7 +80,16 @@ getPlantData = async (plantName) => {
     for (let i = 0; i < illuminance.length; i++) {
         tmp.push(illuminance[i].split("(")[1].split(" Lux")[0]);
     }
-    illuminance = { min: tmp[0].split("~")[0], max: tmp[tmp.length - 1].split("~")[1].replace(',', '') };
+
+    const minimumIlluminance = tmp[0].split("~")[0]/20;
+
+    let maximumIlluminance;
+    if(tmp[tmp.length - 1].split("~")[1].replace(',', '') > 2000){
+        maximumIlluminance = 100;
+    } else{
+        maximumIlluminance = tmp[tmp.length - 1].split("~")[1].replace(',', '')/20;
+    }
+    illuminance = { min: minimumIlluminance, max: maximumIlluminance };
 
     let measurement = new Measurement(temp, humidity, illuminance);
     return measurement;
