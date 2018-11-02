@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 const databaseService = require('../database-service');
 let DTO = require('../dto');
-let http = require('http');
 let parser = require('fast-xml-parser');
 let he = require('he');
 let axios = require('axios');
@@ -108,7 +107,6 @@ router.get('/testtest/:username', (req, res)=>{
 router.get('/public/nongsaro/', async (req, res)=>{
     let plantName = req.query.species;
     let contentNo = '';
-    console.log(plantName);
     var options = {
         attributeNamePrefix : "@_",
         attrNodeName: "attr", //default is 'false'
@@ -138,24 +136,16 @@ router.get('/public/nongsaro/', async (req, res)=>{
         // Intermediate obj
         var tObj = parser.getTraversalObj(body,options);
         var jsonObj = parser.convertToJson(tObj,options);
-        console.log(jsonObj);
-        console.log(Array.isArray(jsonObj["response"]["body"]["items"].item));
-// 
-        // let contentNo;
+        
         if(Array.isArray(jsonObj["response"]["body"]["items"].item)){
             contentNo += jsonObj["response"]["body"]["items"]["item"][0]["cntntsNo"];
         } else{
             contentNo += jsonObj["response"]["body"]["items"]["item"]["cntntsNo"];
         }
-
-        // console.log(jsonObj["response"]["body"]["items"].item);
-
-        // let contentNo = '';
-        // contentNo += jsonObj["response"]["body"]["items"]["item"][0]["cntntsNo"];
-        console.log(contentNo); 
     })
     .catch(error => {
         console.log(error);
+        res.send(error);
     })
 
     await axios.get('http://api.nongsaro.go.kr/service/garden/gardenDtl?apiKey=201810240OZ0QZRO82I7A3HJEUJXTQ&sType=sCntntsSj&wordType=cntntsSj&cntntsNo=' + contentNo)
@@ -192,13 +182,17 @@ router.get('/public/nongsaro/', async (req, res)=>{
         console.log(tmp);
         illuminance = '{"types":[';
         console.log(tmp[0].split("~")[0] + " " + tmp[tmp.length-1].split("~")[1].replace(',',''));
-        for(let i = 0; i<tmp.length - 1; i++){
-            illuminance += '{"min":' + tmp[i].split("~")[0].replace(',', '') + ', "max":' + tmp[i].split("~")[1].replace(',', '') + "}, ";
-        }
-        console.log(illuminance);
-        illuminance += '{"min":' + tmp.slice(-1)[0].split("~")[0].replace(',', '') + ', "max":' + tmp.slice(-1)[0].split("~")[1].replace(',', '') + "}]}";
-        console.log(illuminance);
-        illuminance = JSON.parse(illuminance);
+
+
+        // for(let i = 0; i<tmp.length - 1; i++){
+        //     illuminance += '{"min":' + tmp[i].split("~")[0].replace(',', '') + ', "max":' + tmp[i].split("~")[1].replace(',', '') + "}, ";
+        // }
+        // console.log(illuminance);
+        // illuminance += '{"min":' + tmp.slice(-1)[0].split("~")[0].replace(',', '') + ', "max":' + tmp.slice(-1)[0].split("~")[1].replace(',', '') + "}]}";
+        // console.log(illuminance);
+        // illuminance = JSON.parse(illuminance);
+
+        illuminance = { min: tmp[0].split("~")[0], max: tmp[tmp.length-1].split("~")[1].replace(',','')};
 
         console.log(temp);
         console.log(humidity);
