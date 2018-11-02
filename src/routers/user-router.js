@@ -58,7 +58,6 @@ router.post('/plants/selection', function (req, res) {
 })
 
 router.get('/plants/selection/:userEmail', function (req, res) {
-    console.log(email);
     databaseService.getSelectedPlantOfUser(req.params.userEmail)
         .then((result) => res.json(result))
         .catch((error) => res.json(error))
@@ -73,10 +72,9 @@ router.get('/plants/selection/:userEmail', function (req, res) {
 // })
 
 router.get('/plants/logs/:userEmail', async (req, res) => {
-    let response = await databaseService.getMostRecentLogOfSelectedPlantWithKakaoId(req.params.userEmail);
-    console.log(response);
-    let log = response.details[0].plant_id;
-    console.log(log);
+     databaseService.getMostRecentLogOfSelectedPlant(req.params.userEmail)
+        .then((result) => res.json(result))
+        .catch((error) => res.json(error))
 })
 
 router.get('/plants/logs/test/:id', async (req, res) => {
