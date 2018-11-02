@@ -78,6 +78,7 @@ router.post('/', async function (req, res) {
             }
         };
     }
+
     else if (content.includes("사랑해")) {
         answer = {
             "message": {
@@ -85,6 +86,7 @@ router.post('/', async function (req, res) {
             }
         };
     }
+
     else if (content.includes("도움말")) {
         answer = {
             "message": {
@@ -93,15 +95,7 @@ router.post('/', async function (req, res) {
         };
     }
 
-    else if (content.includes("어때")) {
-        answer = {
-            "message": {
-                "text": "Pet Plant 앱에서 email 계정으로 가입 후, 키우시는 식물의 사진을 찍어서 등록을 해주세요! 그 후 대화를 원하시는 식물을 앱에서 선택해주시면 됩니다."
-            }
-        };
-    }
-
-    else if (content.includes("상태")) {
+    else if (content.includes("상태") || content.includes("어때")) {
         console.log("user key:" + userKey);
         let response;
         try {
@@ -167,10 +161,19 @@ router.post('/', async function (req, res) {
             }
         };
     }
+
+    else if (content.includes("야")) {
+        answer = {
+            "message": {
+                "text": "아 왜"
+            }
+        };
+    }
+
     else {
         answer = {
             "message": {
-                "text": "무슨 말인지 모르겠어요 주인님."
+                "text": "무슨 말인지 모르겠어요."
             }
         };
     }
