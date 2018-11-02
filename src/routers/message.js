@@ -62,7 +62,7 @@ router.post('/', async function (req, res) {
 
     let plantName = plantNameQuery.details[0].nickname;
 
-    if (content.includes("대화하기")) {
+    if (content.includes("대화")) {
         let response = `저는 '${plantName}'입니다. 무슨 일이신가요 주인님?`;
         answer = {
             "message": {
@@ -78,7 +78,22 @@ router.post('/', async function (req, res) {
             }
         };
     }
+    else if (content.includes("사랑해")) {
+        answer = {
+            "message": {
+                "text": "ㅎㅎ고마워요!"
+            }
+        };
+    }
     else if (content.includes("도움말")) {
+        answer = {
+            "message": {
+                "text": "Pet Plant 앱에서 email 계정으로 가입 후, 키우시는 식물의 사진을 찍어서 등록을 해주세요! 그 후 대화를 원하시는 식물을 앱에서 선택해주시면 됩니다."
+            }
+        };
+    }
+
+    else if (content.includes("어때")) {
         answer = {
             "message": {
                 "text": "Pet Plant 앱에서 email 계정으로 가입 후, 키우시는 식물의 사진을 찍어서 등록을 해주세요! 그 후 대화를 원하시는 식물을 앱에서 선택해주시면 됩니다."
@@ -97,16 +112,50 @@ router.post('/', async function (req, res) {
             } else{
                 let plantId = log.details[0].plant_id;
                 let species = await databaseService.getSpeciesOfPlantWithId(plantId);
+                species = (species.details.species);
+                console.log(species);
                 species = species.replace(/\s/g, "&nbsp");
+                console.log(species);
 
                 let plantInfo = await nongsaro.getPlantData(species);
-
 
                 console.log(log);
                 let measurements = log.details[0];
                 console.log(measurements);
+
+                let emotion = '';
+                if(measurements.temperature_level < plantInfo.temp.min){
+                    emotion += "약간 쌀쌀해요!"
+                } else if(measurements.temperature_level > plantInfo.temp.max){
+                    emotion += "좀 더워요!"
+                } 
+
+                if(measurements.moisture_level < plantInfo.humidity.min){
+                    if(emotion.length > 0){
+                        emotion += "그리고 ";
+                    }
+                    emotion += "목말라요!"
+                } else if(measurements.moisture_level > plantInfo.humidity.max){
+                    if(emotion.length > 0){
+                        emotion += "그리고 ";
+                    }
+                    emotion += "물을 너무 많이 주셨네요. 한동안 안 주셔도 될 것 같습니다!"
+                } 
+
+                if(measurements.illumination_level < plantInfo.illuminance.min){
+                    if(emotion.length > 0){
+                        emotion += " 또, ";
+                    }
+                    emotion += "어두워요. 아무것도 안보이네요. 빛을 좀 더 주세요!";
+                } else if(measurements.illumination_level > plantInfo.illuminance.max){
+                    if(emotion.length > 0){
+                        emotion += " 또, ";
+                    }
+                    emotion += "눈이 부셔요! 좀 더 어두운 곳으로 데려가 주세요!";
+                } 
+
                 let currentStatus = `온도는 ${measurements.temperature_level}%이며, 습도는 ${measurements.moisture_level}%이고 조도는 ${measurements.illumination_level}%입니다!`;
-                response = `'${plantName}'의 ${currentStatus}`;
+                response = `'${plantName}'의 ${currentStatus}. ${emotion}`;
             }
         } catch (err) {
             console.log(err);
@@ -127,24 +176,5 @@ router.post('/', async function (req, res) {
     }
     res.send(answer);
 });
-
-// kakaotalkExists = (kakaotalkId) => {
-//     let isExistingKakaotalkKey = await databaseService.kakaotalkKeyExistsInDatabase(kakaotalkId);
-//     console.log(isExistingKakaotalkKey);
-//     if (!isExistingKakaotalkKey) {
-//         const answer = {
-//             "message": {
-//                 "text": `Pet Plant 앱과 현재 연동이 되어있지 않습니다. 연동을 하기 위해서는 \n1.하단의 링크를 클릭.\n2.첫 번째 양식에는 Pet Plant 앱에서 등록한 email을 입력해주시고, 두 번째 양식에는 '${userKey}'를 입력\n3. 등록 버튼 클릭`,
-//                 "message_button": {
-//                     "label": "연동하기.",
-//                     "url": "http://117.16.136.73:8080/users/kakaotalk-registration"
-//                 }
-//             }
-//         };
-//         res.send(answer);
-//         return;
-//     }
-// }
-
 
 module.exports = router;
