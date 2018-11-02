@@ -2,9 +2,6 @@ var express = require('express');
 var router = express.Router();
 const databaseService = require('../database-service');
 let DTO = require('../dto');
-let parser = require('fast-xml-parser');
-let axios = require('axios');
-let Measurement = require('../measurement');
 let nongsaro = require('../nongsaro');
 
 router.use(function (req, res, next) {
@@ -88,15 +85,13 @@ router.get('/plants/logs/:userEmail', (req, res) => {
 })
 
 router.post('/registration', (req, res) => {
-    let kakaotalkId = req.body.kakaotalkId;
-    databaseService.kakaotalkKeyExistsInDatabase(kakaotalkId)
+    databaseService.kakaotalkKeyExistsInDatabase(req.body.kakaotalkId)
         .then((exists) => console.log(exists))
         .catch((error) => res.json(error));
 })
 
 router.get('/testtest/:username', (req, res) => {
-    let email = req.params.username;
-    databaseService.getSelectedPlantOfKakaotalkUser(email)
+    databaseService.getSelectedPlantOfKakaotalkUser(req.params.username)
         .then((exists) => {
             console.log(exists);
             res.send(exists);
@@ -104,72 +99,10 @@ router.get('/testtest/:username', (req, res) => {
         .catch((error) => res.json(error));
 })
 
-router.get('/public/nongsaro/', async (req, res) => {
-    const nongsaroOptions = nongsaro.options;
-    let contentNo = '';
-
-    let response;
-    let plantName = req.query.species;
-    try{
-        response = await axios.get('http://api.nongsaro.go.kr/service/garden/gardenList?apiKey=201810240OZ0QZRO82I7A3HJEUJXTQ&sType=sPlntzrNm&sText=' + plantName)
-    } catch(error){
-        res.send(error);
-        return;
-    }
-
-    var body = response.data;
-
-    if (parser.validate(body) === true) { //optional (it'll return an object in case it's not valid)
-        var jsonObj = parser.parse(body, nongsaroOptions);
-    }
-
-    // Intermediate obj
-    var tObj = parser.getTraversalObj(body, nongsaroOptions);
-    var jsonObj = parser.convertToJson(tObj, nongsaroOptions);
-
-    if (Array.isArray(jsonObj["response"]["body"]["items"].item)) {
-        contentNo += jsonObj["response"]["body"]["items"]["item"][0]["cntntsNo"];
-    } else {
-        contentNo += jsonObj["response"]["body"]["items"]["item"]["cntntsNo"];
-    }
-
-    try{
-        response = await axios.get('http://api.nongsaro.go.kr/service/garden/gardenDtl?apiKey=201810240OZ0QZRO82I7A3HJEUJXTQ&sType=sCntntsSj&wordType=cntntsSj&cntntsNo=' + contentNo)
-    } catch(error){
-        res.json(error);
-        return;
-    }
-
-    var body = response.data;
-
-    if (parser.validate(body) === true) { //optional (it'll return an object in case it's not valid)
-        var jsonObj = parser.parse(body, nongsaroOptions);
-    }
-
-    // Parse obj
-    var tObj = parser.getTraversalObj(body, nongsaroOptions);
-    var jsonObj = parser.convertToJson(tObj, nongsaroOptions);
-
-    // Make JSON format
-
-    let temp = jsonObj["response"]["body"]["item"]["grwhTpCodeNm"];
-    temp = temp.split('~');
-    temp = JSON.parse('{"min":' + temp[0] + ', "max":' + temp[1].split("℃")[0] + "}");
-
-    let humidity = jsonObj["response"]["body"]["item"]["hdCodeNm"];
-    humidity = humidity.split(' ~ ');
-    humidity = JSON.parse('{"min":' + humidity[0] + ', "max":' + humidity[1].split("%")[0] + "}");
-
-    let illuminance = jsonObj["response"]["body"]["item"]["lighttdemanddoCodeNm"];
-    illuminance = illuminance.split("),");
-    let tmp = [];
-    for (let i = 0; i < illuminance.length; i++) {
-        tmp.push(illuminance[i].split("(")[1].split(" Lux")[0]);
-    }
-    illuminance = { min: tmp[0].split("~")[0], max: tmp[tmp.length - 1].split("~")[1].replace(',', '') };
-
-    let measurement = new Measurement(temp, humidity, illuminance);
-    res.json(measurement);
+router.get('/public/nongsaro/:plantName', (req, res) => {
+    nongsaro.getPlantData(req.params.plantName)
+    .then(result => res.json(result))
+    .catch((error) => res.json(error))
 })
 
 module.exports = router;
