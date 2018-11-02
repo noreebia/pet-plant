@@ -35,7 +35,7 @@ router.post('/', async function (req, res) {
     if (!isExistingKakaotalkKey) {
         const answer = {
             "message": {
-                "text": `Pet Plant 앱과 현재 연동이 되어있지 않습니다. 연동을 하기 위해서 Pet Plant 앱에서 등록한 아이디를 보내주세요.`,
+                "text": `Pet Plant 앱과 현재 연동이 되어있지 않습니다. 연동을 하기 위해서 Pet Plant 앱에서 등록한 아이디를 이 방에 보내주세요.\n예시: mail@domain.com`,
             }
         };
         res.send(answer);
