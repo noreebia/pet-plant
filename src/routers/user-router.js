@@ -104,7 +104,7 @@ router.get('/testtest/:username', (req, res)=>{
     .catch((error)=> res.json(error));
 })
 
-router.get('/public/nongsaro', async (req, res)=>{
+router.get('/public/nongsaro/', async (req, res)=>{
     let plantName = req.query.species;
     console.log(plantName);
     let contentNo = '';
@@ -182,6 +182,7 @@ router.get('/public/nongsaro', async (req, res)=>{
     })
     .catch(error => {
         console.log(error);
+        res.send(error);
     })
 })
 
