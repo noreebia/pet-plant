@@ -156,47 +156,28 @@ router.get('/public/nongsaro/', async (req, res)=>{
             var jsonObj = parser.parse(body,options);
         }
         
-        // parsing obj
+        // Parse obj
         var tObj = parser.getTraversalObj(body,options);
         var jsonObj = parser.convertToJson(tObj,options);
-        let temp = jsonObj["response"]["body"]["item"]["grwhTpCodeNm"];
-        let humidity = jsonObj["response"]["body"]["item"]["hdCodeNm"];
-        let illuminance = jsonObj["response"]["body"]["item"]["lighttdemanddoCodeNm"];
 
         // Make JSON format
 
+        let temp = jsonObj["response"]["body"]["item"]["grwhTpCodeNm"];
         temp = temp.split('~');
-        temp = '{"min":' + temp[0] + ', "max":' + temp[1].split("℃")[0] + "}";
-        temp = JSON.parse(temp);
+        temp = JSON.parse('{"min":' + temp[0] + ', "max":' + temp[1].split("℃")[0] + "}");
 
+        let humidity = jsonObj["response"]["body"]["item"]["hdCodeNm"];
         humidity = humidity.split(' ~ ');
-        humidity = '{"min":' + humidity[0] + ', "max":' + humidity[1].split("%")[0] + "}";
-        humidity = JSON.parse(humidity);
+        humidity = JSON.parse('{"min":' + humidity[0] + ', "max":' + humidity[1].split("%")[0] + "}");
 
-        illuminance = illuminance.split("),")
-        console.log(illuminance);
+        let illuminance = jsonObj["response"]["body"]["item"]["lighttdemanddoCodeNm"];
+        illuminance = illuminance.split("),");
         let tmp = [];
         for(let i = 0; i<illuminance.length; i++){
             tmp.push(illuminance[i].split("(")[1].split(" Lux")[0]);
         }
-        console.log(tmp);
-        illuminance = '{"types":[';
-        console.log(tmp[0].split("~")[0] + " " + tmp[tmp.length-1].split("~")[1].replace(',',''));
-
-
-        // for(let i = 0; i<tmp.length - 1; i++){
-        //     illuminance += '{"min":' + tmp[i].split("~")[0].replace(',', '') + ', "max":' + tmp[i].split("~")[1].replace(',', '') + "}, ";
-        // }
-        // console.log(illuminance);
-        // illuminance += '{"min":' + tmp.slice(-1)[0].split("~")[0].replace(',', '') + ', "max":' + tmp.slice(-1)[0].split("~")[1].replace(',', '') + "}]}";
-        // console.log(illuminance);
-        // illuminance = JSON.parse(illuminance);
-
         illuminance = { min: tmp[0].split("~")[0], max: tmp[tmp.length-1].split("~")[1].replace(',','')};
 
-        console.log(temp);
-        console.log(humidity);
-        console.log(illuminance);
         let measurement = new Measurement(temp,humidity,illuminance);    
         res.json(measurement);  
     })
