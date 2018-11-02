@@ -107,8 +107,8 @@ router.get('/testtest/:username', (req, res)=>{
 
 router.get('/public/nongsaro/', async (req, res)=>{
     let plantName = req.query.species;
-    console.log(plantName);
     let contentNo = '';
+    console.log(plantName);
     var options = {
         attributeNamePrefix : "@_",
         attrNodeName: "attr", //default is 'false'
@@ -138,7 +138,20 @@ router.get('/public/nongsaro/', async (req, res)=>{
         // Intermediate obj
         var tObj = parser.getTraversalObj(body,options);
         var jsonObj = parser.convertToJson(tObj,options);
-        contentNo += jsonObj["response"]["body"]["items"]["item"][0]["cntntsNo"];
+        console.log(jsonObj);
+        console.log(Array.isArray(jsonObj["response"]["body"]["items"].item));
+// 
+        // let contentNo;
+        if(Array.isArray(jsonObj["response"]["body"]["items"].item)){
+            contentNo += jsonObj["response"]["body"]["items"]["item"][0]["cntntsNo"];
+        } else{
+            contentNo += jsonObj["response"]["body"]["items"]["item"]["cntntsNo"];
+        }
+
+        // console.log(jsonObj["response"]["body"]["items"].item);
+
+        // let contentNo = '';
+        // contentNo += jsonObj["response"]["body"]["items"]["item"][0]["cntntsNo"];
         console.log(contentNo); 
     })
     .catch(error => {
