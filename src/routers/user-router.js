@@ -37,12 +37,12 @@ router.post('/register_kakao', function (req, res) {
 })
 
 router.post('/plants', function (req, res) {
-    let plantId = req.body.plantId;
+    let deviceId = req.body.plantId;
     let userEmail = req.body.userEmail;
     let species = req.body.species;
     let nickname = req.body.nickname;
 
-    databaseService.registerPlant(plantId, userEmail, species, nickname)
+    databaseService.registerPlant(deviceId, userEmail, species, nickname)
         .then((result) => res.json(result))
         .catch((error) => res.json(error))
 })
@@ -97,6 +97,15 @@ router.get('/testtest/:username', (req, res) => {
             res.send(exists);
         })
         .catch((error) => res.json(error));
+})
+
+router.post('/testtesttest', function (req, res) {
+    let nickname = req.body.nickname;
+    let email = req.body.email;
+    console.log(email);
+    databaseService.selectPlant(nickname, email)
+        .then((result) => res.json(result))
+        .catch((error) => res.json(error))
 })
 
 router.get('/public/nongsaro/:plantName', (req, res) => {

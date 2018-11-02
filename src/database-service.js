@@ -1,6 +1,5 @@
 const db = require('./db');
 let DTO = require('./dto');
-const mysql = require('mysql');
 
 
 exports.getAllUsers = function (callback) {
@@ -129,8 +128,42 @@ exports.getPlantsOfKakaotalkUser = function (kakaotalkId) {
     })
 }
 
-exports.registerPlant = (deviceId, userEmail, species, nickname) => {
+isExistingDeviceId = (deviceId) => {
     return new Promise((resolve, reject) => {
+        let query = `SELECT EXISTS(SELECT * FROM plant WHERE device_id = '${deviceId}');`;
+        db.pool.query(query, (err, rows) => {
+            if (err) {
+                reject(new DTO(false, err));
+            }
+            let result = rows[0];
+            resolve(result[Object.keys(result)[0]]);
+        })
+    })
+}
+
+setDeviceIdToNull = (deviceId) => {
+    return new Promise((resolve, reject) => {
+        let query = `UPDATE plant SET device_id = null WHERE device_id = '${deviceId}'`;
+        db.pool.query(query, (err, rows) => {
+            if (err) {
+                reject(new DTO(false, err));
+            }
+            resolve();
+        })
+    })
+}
+
+exports.registerPlant = (deviceId, userEmail, species, nickname) => {
+    return new Promise(async (resolve, reject) => {
+        try{
+            let deviceIdExists = await isExistingDeviceId(deviceId);
+            if(deviceIdExists){
+                await setDeviceIdToNull(deviceId);
+            }
+        } catch(err){
+            console.log(err);
+        }
+
         let query = `INSERT INTO plant (id, device_id, owner_email, species, nickname)  
         VALUES ( default, '${deviceId}', '${userEmail}', '${species}', '${nickname}'); `;
         db.pool.query(query, (err, rows) => {
