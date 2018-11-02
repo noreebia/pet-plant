@@ -6,6 +6,7 @@ let http = require('http');
 let parser = require('fast-xml-parser');
 let he = require('he');
 let axios = require('axios');
+let Measurement = require('../measurement');
 
 router.use(function (req, res, next) {
     console.log('Request for user resource arrived...');
@@ -156,33 +157,45 @@ router.get('/public/nongsaro/', async (req, res)=>{
         var tObj = parser.getTraversalObj(body,options);
         var jsonObj = parser.convertToJson(tObj,options);
         let temp = jsonObj["response"]["body"]["item"]["grwhTpCodeNm"];
-        let humid = jsonObj["response"]["body"]["item"]["hdCodeNm"];
-        let light = jsonObj["response"]["body"]["item"]["lighttdemanddoCodeNm"];
+        let humidity = jsonObj["response"]["body"]["item"]["hdCodeNm"];
+        let illuminance = jsonObj["response"]["body"]["item"]["lighttdemanddoCodeNm"];
 
         // Make JSON format
 
         temp = temp.split('~');
-        temp = '{"min":' + temp[0] + ', "max":' + temp[1].split("℃")[0] + "}"
+        temp = '{"min":' + temp[0] + ', "max":' + temp[1].split("℃")[0] + "}";
+        temp = JSON.parse(temp);
 
-        humid = humid.split(' ~ ');
-        humid = '{"min":' + humid[0] + ', "max":' + humid[1].split("%")[0] + "}"
+        humidity = humidity.split(' ~ ');
+        humidity = '{"min":' + humidity[0] + ', "max":' + humidity[1].split("%")[0] + "}";
+        humidity = JSON.parse(humidity);
 
-        light = light.split("),")
+        illuminance = illuminance.split("),")
+        console.log(illuminance);
         let tmp = [];
-        for(let i = 0; i<light.length; i++){
-            tmp.push(light[i].split("(")[1].split(" Lux")[0]);
+        for(let i = 0; i<illuminance.length; i++){
+            tmp.push(illuminance[i].split("(")[1].split(" Lux")[0]);
         }
-        light = '{"types":[';
+        console.log(tmp);
+        illuminance = '{"types":[';
+        console.log(tmp[0].split("~")[0] + " " + tmp[tmp.length-1].split("~")[1].replace(',',''));
         for(let i = 0; i<tmp.length - 1; i++){
-            light += '{"min":' + tmp[i].split("~")[0].replace(',', '') + ', "max":' + tmp[i].split("~")[1].replace(',', '') + "}, ";
+            illuminance += '{"min":' + tmp[i].split("~")[0].replace(',', '') + ', "max":' + tmp[i].split("~")[1].replace(',', '') + "}, ";
         }
-        light += '{"min":' + tmp.slice(-1)[0].split("~")[0].replace(',', '') + ', "max":' + tmp.slice(-1)[0].split("~")[1].replace(',', '') + "}]}";
+        console.log(illuminance);
+        illuminance += '{"min":' + tmp.slice(-1)[0].split("~")[0].replace(',', '') + ', "max":' + tmp.slice(-1)[0].split("~")[1].replace(',', '') + "}]}";
+        console.log(illuminance);
+        illuminance = JSON.parse(illuminance);
 
-        res.send("'[" + temp + ", " + humid + ", " + light + "]'");  
+        console.log(temp);
+        console.log(humidity);
+        console.log(illuminance);
+        let measurement = new Measurement(temp,humidity,illuminance);    
+        res.json(measurement);  
     })
     .catch(error => {
         console.log(error);
-        res.send(error);
+        res.json(error);
     })
 })
 
