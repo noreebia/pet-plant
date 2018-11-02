@@ -3,9 +3,9 @@ var router = express.Router();
 const databaseService = require('../database-service');
 let DTO = require('../dto');
 let parser = require('fast-xml-parser');
-let he = require('he');
 let axios = require('axios');
 let Measurement = require('../measurement');
+let nongsaro = require('../nongsaro');
 
 router.use(function (req, res, next) {
     console.log('Request for user resource arrived...');
@@ -107,23 +107,24 @@ router.get('/testtest/:username', (req, res)=>{
 router.get('/public/nongsaro/', async (req, res)=>{
     let plantName = req.query.species;
     let contentNo = '';
-    var options = {
-        attributeNamePrefix : "@_",
-        attrNodeName: "attr", //default is 'false'
-        textNodeName : "#text",
-        ignoreAttributes : true,
-        ignoreNameSpace : false,
-        allowBooleanAttributes : false,
-        parseNodeValue : true,
-        parseAttributeValue : false,
-        trimValues: false,
-        cdataTagName: false, //default is 'false'
-        cdataPositionChar: "!",
-        localeRange: "", //To support non english character in tag/attribute values.
-        parseTrueNumberOnly: false,
-        attrValueProcessor: a => he.decode(a, {isAttributeValue: true}),//default is a=>a
-        tagValueProcessor : a => he.decode(a) //default is a=>a
-    };
+    const options = nongsaro.options;
+    // var options = {
+    //     attributeNamePrefix : "@_",
+    //     attrNodeName: "attr", //default is 'false'
+    //     textNodeName : "#text",
+    //     ignoreAttributes : true,
+    //     ignoreNameSpace : false,
+    //     allowBooleanAttributes : false,
+    //     parseNodeValue : true,
+    //     parseAttributeValue : false,
+    //     trimValues: false,
+    //     cdataTagName: false, //default is 'false'
+    //     cdataPositionChar: "!",
+    //     localeRange: "", //To support non english character in tag/attribute values.
+    //     parseTrueNumberOnly: false,
+    //     attrValueProcessor: a => he.decode(a, {isAttributeValue: true}),//default is a=>a
+    //     tagValueProcessor : a => he.decode(a) //default is a=>a
+    // };
 
     await axios.get('http://api.nongsaro.go.kr/service/garden/gardenList?apiKey=201810240OZ0QZRO82I7A3HJEUJXTQ&sType=sPlntzrNm&sText=' + plantName)
     .then(response => {
