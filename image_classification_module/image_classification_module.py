@@ -34,9 +34,12 @@ def main(filename = "", model = None):
     if output == 0:
         print("This picture is Sansevieria")
         return "snake plant"
-    else:
+    elif output == 1:
         print("This picture is spartyfilm")
         return "spath"
+    else:
+        print("This picture is oxalis")
+        return "oxalis"
 
 if __name__ == "__main__":
     import sys

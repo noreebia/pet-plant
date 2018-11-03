@@ -10,7 +10,7 @@ import cv2
 
 col_size = 56
 row_size = 56
-output = 2
+output = 3
 EPOCH = 50
 
 def sigmoidal_decay(e, start=0, end=100, lr_start=1e-3, lr_end=1e-5):
